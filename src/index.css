@@ -6,123 +6,118 @@
 
 @layer base {
   :root {
-    /* Core MybizAI Brand Colors */
+    /* Primary brand colors */
+    --primary: 220 100% 60%;
+    --primary-glow: 220 100% 70%;
+    --primary-dark: 220 100% 45%;
+    
+    /* Background system */
     --background: 0 0% 100%;
-    --foreground: 220 13% 18%;
+    --background-secondary: 210 40% 98%;
+    --background-tertiary: 210 40% 95%;
     
-    /* Card & Surface Colors */
+    /* Foreground colors */
+    --foreground: 222.2 84% 4.9%;
+    --foreground-secondary: 210 40% 20%;
+    --foreground-muted: 215.4 16.3% 46.9%;
+    
+    /* UI element colors */
     --card: 0 0% 100%;
-    --card-foreground: 220 13% 18%;
-    --surface: 210 20% 98%;
-    --surface-accent: 220 43% 98%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
     
-    /* Primary Brand (MybizAI Blue) */
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
-    --primary-hover: 217 91% 55%;
-    --primary-subtle: 217 91% 95%;
+    /* Interactive elements */
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
     
-    /* Secondary Colors */
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 220 13% 18%;
-    --secondary-hover: 220 14.3% 90%;
+    /* Form elements */
+    --input: 214.3 31.8% 91.4%;
+    --border: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
     
-    /* Accent & Highlight */
-    --accent: 217 91% 60%;
-    --accent-foreground: 0 0% 100%;
-    --accent-subtle: 217 91% 95%;
+    /* States */
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    
+    /* Chart colors */
+    --chart-1: 173 80% 40%;
+    --chart-2: 43 80% 40%;
+    --chart-3: 271 80% 40%;
+    --chart-4: 14 80% 40%;
+    --chart-5: 197 80% 40%;
     
     /* Status Colors */
     --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
     
-    /* Neutral System */
-    --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 8.9% 46.1%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 217 91% 60%;
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--background-secondary)), hsl(var(--background-tertiary)));
+    --gradient-accent: linear-gradient(135deg, hsl(var(--chart-1)), hsl(var(--chart-3)));
     
-    /* Interactive States */
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 13% 18%;
+    /* Shadows */
+    --shadow-primary: 0 10px 30px -10px hsl(var(--primary) / 0.3);
+    --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.4);
+    --shadow-card: 0 4px 20px -4px hsl(var(--background) / 0.8);
     
-    /* Tech Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%), hsl(230 91% 65%));
-    --gradient-secondary: linear-gradient(135deg, hsl(217 91% 95%), hsl(230 91% 98%));
-    --gradient-hero: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(230 91% 65%) 50%, hsl(242 91% 70%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(220 43% 98%));
-    
-    /* Shadows & Effects */
-    --shadow-sm: 0 1px 2px 0 hsl(220 13% 18% / 0.05);
-    --shadow-md: 0 4px 6px -1px hsl(220 13% 18% / 0.1);
-    --shadow-lg: 0 10px 15px -3px hsl(220 13% 18% / 0.1);
-    --shadow-glow: 0 0 20px hsl(217 91% 60% / 0.3);
-    --shadow-tech: 0 8px 32px hsl(217 91% 60% / 0.15);
-    
-    /* Animations */
+    /* Animation variables */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-fast: all 0.15s ease-out;
     
     --radius: 0.75rem;
   }
-  
+
   .dark {
-    /* Dark Mode MybizAI Colors */
-    --background: 220 27% 8%;
-    --foreground: 220 9% 95%;
+    /* Dark Mode Colors */
+    --primary: 220 100% 60%;
+    --primary-glow: 220 100% 70%;
+    --primary-dark: 220 100% 45%;
     
-    /* Dark Card & Surface */
-    --card: 220 27% 10%;
-    --card-foreground: 220 9% 95%;
-    --surface: 220 27% 12%;
-    --surface-accent: 220 27% 14%;
+    --background: 222 47% 5%;
+    --background-secondary: 222 47% 8%;
+    --background-tertiary: 222 47% 12%;
     
-    /* Dark Primary */
-    --primary: 217 91% 60%;
-    --primary-foreground: 220 27% 8%;
-    --primary-hover: 217 91% 65%;
-    --primary-subtle: 217 91% 15%;
+    --foreground: 210 40% 98%;
+    --foreground-secondary: 210 40% 80%;
+    --foreground-muted: 210 40% 60%;
     
-    /* Dark Secondary */
-    --secondary: 220 27% 16%;
-    --secondary-foreground: 220 9% 95%;
-    --secondary-hover: 220 27% 20%;
+    --card: 222 47% 8%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 8%;
+    --popover-foreground: 210 40% 98%;
     
-    /* Dark Accent */
-    --accent: 217 91% 60%;
-    --accent-foreground: 220 27% 8%;
-    --accent-subtle: 217 91% 15%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
     
-    /* Dark Status */
+    --input: 217.2 32.6% 17.5%;
+    --border: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    
+    --secondary: 222 47% 12%;
+    --secondary-foreground: 210 40% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    
+    --chart-1: 173 100% 60%;
+    --chart-2: 43 100% 60%;
+    --chart-3: 271 100% 60%;
+    --chart-4: 14 100% 60%;
+    --chart-5: 197 100% 60%;
+    
     --success: 142 71% 50%;
     --warning: 38 92% 55%;
-    --destructive: 0 84% 65%;
     
-    /* Dark Neutral */
-    --muted: 220 27% 16%;
-    --muted-foreground: 220 9% 60%;
-    --border: 220 27% 18%;
-    --input: 220 27% 18%;
-    --ring: 217 91% 60%;
-    
-    /* Dark Interactive */
-    --popover: 220 27% 12%;
-    --popover-foreground: 220 9% 95%;
-    
-    /* Dark Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%), hsl(230 91% 65%));
-    --gradient-secondary: linear-gradient(135deg, hsl(220 27% 16%), hsl(220 27% 20%));
-    --gradient-hero: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(230 91% 65%) 50%, hsl(242 91% 70%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(220 27% 12%), hsl(220 27% 14%));
-    
-    /* Dark Shadows */
-    --shadow-glow: 0 0 30px hsl(217 91% 60% / 0.4);
-    --shadow-tech: 0 8px 32px hsl(217 91% 60% / 0.25);
+    --shadow-glow: 0 0 30px hsl(var(--primary-glow) / 0.4);
+    --shadow-card: 0 8px 32px hsl(var(--primary) / 0.25);
   }
 }
 

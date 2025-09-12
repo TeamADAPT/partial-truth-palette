@@ -3,6 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { TaskDelegationModal } from "@/components/TaskDelegationModal";
+import { IdeaCard } from "@/components/IdeaCard";
+import { StatsCard } from "@/components/StatsCard";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { RevenueChart } from "@/components/charts/RevenueChart";
+import { TasksChart } from "@/components/charts/TasksChart";
 import { 
   Brain, 
   Plus, 
@@ -16,11 +22,9 @@ import {
   ArrowRight,
   Lightbulb,
   Briefcase,
-  BarChart3
+  BarChart3,
+  Settings
 } from "lucide-react";
-import { TaskDelegationModal } from "@/components/TaskDelegationModal";
-import { IdeaCard } from "@/components/IdeaCard";
-import { StatsCard } from "@/components/StatsCard";
 
 const Index = () => {
   const [isDelegationModalOpen, setIsDelegationModalOpen] = useState(false);
@@ -109,7 +113,7 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-surface to-surface-accent">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background-secondary to-background-tertiary">
       {/* Header */}
       <header className="border-b border-border/50 bg-card/80 backdrop-blur-sm">
         <div className="container mx-auto px-6 py-4">
@@ -130,14 +134,18 @@ const Index = () => {
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input 
                   placeholder="Search projects, ideas..." 
-                  className="w-64 pl-10 bg-surface/50"
+                  className="w-64 pl-10 bg-background/50"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
+              <ThemeToggle />
+              <Button variant="outline" size="icon" className="bg-background/80 backdrop-blur-sm border-border/50">
+                <Settings className="h-4 w-4" />
+              </Button>
               <Button 
                 onClick={() => setIsDelegationModalOpen(true)}
-                className="bg-gradient-primary hover:opacity-90 shadow-glow transition-all duration-300 hover:shadow-tech"
+                className="bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 shadow-primary transition-all duration-300 hover:shadow-glow"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 New Task
@@ -156,8 +164,45 @@ const Index = () => {
           ))}
         </div>
 
+        {/* Analytics Overview */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <Card className="bg-card/50 border-border/50 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="text-foreground flex items-center gap-2">
+                <BarChart3 className="h-5 w-5 text-primary" />
+                Revenue Analytics
+              </CardTitle>
+              <CardDescription className="text-muted-foreground">
+                AI-driven revenue optimization and forecasting
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64">
+                <RevenueChart />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card/50 border-border/50 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="text-foreground flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-chart-1" />
+                Task Performance
+              </CardTitle>
+              <CardDescription className="text-muted-foreground">
+                Autonomous task completion metrics
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64">
+                <TasksChart />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Quick Actions */}
-        <Card className="mb-8 tech-card border-primary/20">
+        <Card className="mb-8 bg-card/50 border-primary/20 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Target className="h-5 w-5 text-primary" />
@@ -205,7 +250,7 @@ const Index = () => {
                 <Briefcase className="h-5 w-5 text-primary" />
                 Active Business Ideas
               </h2>
-              <Badge variant="secondary" className="bg-primary-subtle text-primary">
+              <Badge variant="secondary" className="bg-primary/10 text-primary">
                 {activeIdeas.length} Active
               </Badge>
             </div>
@@ -231,7 +276,7 @@ const Index = () => {
             
             <div className="space-y-4">
               {ideasInReview.map((idea) => (
-                <Card key={idea.id} className="tech-card border-warning/20 hover:border-warning/40 transition-smooth">
+                <Card key={idea.id} className="bg-card/50 border-warning/20 hover:border-warning/40 transition-smooth backdrop-blur-sm">
                   <CardContent className="p-4">
                     <h3 className="font-medium mb-2">{idea.title}</h3>
                     <p className="text-sm text-muted-foreground mb-3">{idea.description}</p>
