@@ -1,54 +1,63 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { TrendingUp, TrendingDown, LucideIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { LucideIcon, TrendingUp, TrendingDown } from 'lucide-react';
 
 interface StatsCardProps {
   title: string;
   value: string;
   change: string;
-  trend: "up" | "down";
+  trend: 'up' | 'down' | 'neutral';
   icon: LucideIcon;
-  index: number;
+  index?: number;
 }
 
-export const StatsCard = ({ title, value, change, trend, icon: Icon, index }: StatsCardProps) => {
+export const StatsCard = ({ 
+  title, 
+  value, 
+  change, 
+  trend, 
+  icon: Icon,
+  index = 0
+}: StatsCardProps) => {
+  const getTrendColor = (trend: string) => {
+    switch (trend) {
+      case 'up': return 'text-success bg-success/10 border-success/20';
+      case 'down': return 'text-destructive bg-destructive/10 border-destructive/20';
+      case 'neutral': return 'text-muted-foreground bg-muted/10 border-border/20';
+      default: return 'text-muted-foreground bg-muted/10 border-border/20';
+    }
+  };
+
+  const getTrendIcon = (trend: string) => {
+    switch (trend) {
+      case 'up': return TrendingUp;
+      case 'down': return TrendingDown;
+      default: return null;
+    }
+  };
+
+  const TrendIcon = getTrendIcon(trend);
+
   return (
-    <Card 
-      className={cn(
-        "tech-card hover:shadow-glow transition-all duration-300 hover:-translate-y-1 cursor-pointer",
-        "animate-float"
-      )}
-      style={{ 
-        animationDelay: `${index * 100}ms`,
-        animationDuration: `${5 + index * 0.3}s`
-      }}
-    >
-      <CardContent className="p-6">
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <p className="text-muted-foreground text-sm font-medium">{title}</p>
-            <div className="flex items-baseline gap-2">
-              <p className="text-3xl font-bold gradient-text">{value}</p>
-              <Badge 
-                variant="secondary" 
-                className={cn(
-                  "flex items-center gap-1 text-xs",
-                  trend === "up" ? "bg-success/10 text-success border-success/20" : "bg-destructive/10 text-destructive border-destructive/20"
-                )}
-              >
-                {trend === "up" ? (
-                  <TrendingUp className="h-3 w-3" />
-                ) : (
-                  <TrendingDown className="h-3 w-3" />
-                )}
-                {change}
-              </Badge>
-            </div>
-          </div>
-          <div className="relative">
-            <Icon className="h-8 w-8 text-primary opacity-80" />
-            <div className="absolute -inset-2 bg-primary/10 rounded-full blur animate-pulse"></div>
+    <Card className="hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20 bg-card/50 backdrop-blur-sm group">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
+          {title}
+        </CardTitle>
+        <Icon className="h-5 w-5 text-primary opacity-80 group-hover:opacity-100 transition-opacity" />
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-3">
+          <div className="text-2xl font-bold text-foreground">{value}</div>
+          <div className="flex items-center gap-2">
+            <Badge 
+              variant="secondary" 
+              className={`${getTrendColor(trend)} border text-xs px-2 py-1 flex items-center gap-1`}
+            >
+              {TrendIcon && <TrendIcon className="h-3 w-3" />}
+              {change}
+            </Badge>
+            <span className="text-xs text-muted-foreground">from last period</span>
           </div>
         </div>
       </CardContent>
