@@ -1,13 +1,10 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TaskDelegationModal } from "@/components/TaskDelegationModal";
 import { IdeaCard } from "@/components/IdeaCard";
 import { StatsCard } from "@/components/StatsCard";
 import { RevenueChart } from "@/components/charts/RevenueChart";
 import { TasksChart } from "@/components/charts/TasksChart";
-import Navigation from "@/components/Navigation";
 import { 
   TrendingUp, 
   Users, 
@@ -22,7 +19,6 @@ import {
 } from "lucide-react";
 
 const Index = () => {
-  const [isDelegationModalOpen, setIsDelegationModalOpen] = useState(false);
 
   // Mock data - replace with real data later
   const activeIdeas = [
@@ -107,12 +103,9 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background-secondary to-background-tertiary">
-      {/* Navigation */}
-      <Navigation onNewTask={() => setIsDelegationModalOpen(true)} />
-
+    <div className="bg-gradient-to-br from-background via-background to-muted/20 p-6">
       {/* Main Content */}
-      <main className="container mx-auto px-6 py-8">
+      <div className="space-y-8">
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {stats.map((stat, index) => (
@@ -256,13 +249,7 @@ const Index = () => {
             </div>
           </div>
         </div>
-      </main>
-
-      {/* Task Delegation Modal */}
-      <TaskDelegationModal 
-        open={isDelegationModalOpen}
-        onOpenChange={setIsDelegationModalOpen}
-      />
+      </div>
     </div>
   );
 };
