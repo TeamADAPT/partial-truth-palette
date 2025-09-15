@@ -147,7 +147,7 @@ const Teams = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background-secondary to-background-tertiary">
+    <div className="flex-1 bg-gradient-to-br from-background via-background-secondary to-background-tertiary">
       <div className="container mx-auto px-6 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
