@@ -1,4 +1,4 @@
-import { Brain, Home, Briefcase, BarChart3, Users, Settings, Plus } from "lucide-react";
+import { Brain, Home, Briefcase, BarChart3, Users, Settings, Plus, Palette, FileText, Megaphone, TrendingUp } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -21,6 +21,10 @@ const navItems = [
   { path: "/projects", label: "Projects", icon: Briefcase },
   { path: "/analytics", label: "Analytics", icon: BarChart3 },
   { path: "/teams", label: "Teams", icon: Users },
+  { path: "/brand-identity", label: "Brand Identity", icon: Palette },
+  { path: "/business-plans", label: "Business Plans", icon: FileText },
+  { path: "/marketing-planner", label: "Marketing", icon: Megaphone },
+  { path: "/market-research", label: "Market Research", icon: TrendingUp },
 ];
 
 interface AppSidebarProps {

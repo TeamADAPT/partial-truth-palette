@@ -11,6 +11,10 @@ import Index from "./pages/Index";
 import Projects from "./pages/Projects";
 import Analytics from "./pages/Analytics";
 import Teams from "./pages/Teams";
+import BrandIdentity from "./pages/BrandIdentity";
+import BusinessPlans from "./pages/BusinessPlans";
+import MarketingPlanner from "./pages/MarketingPlanner";
+import MarketResearch from "./pages/MarketResearch";
 import NotFound from "./pages/NotFound";
 import { useState } from "react";
 
@@ -33,13 +37,17 @@ const AppLayout = () => {
           </header>
           
           <main className="flex-1 overflow-auto">
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/projects" element={<Projects />} />
-              <Route path="/analytics" element={<Analytics />} />
-              <Route path="/teams" element={<Teams />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/projects" element={<Projects />} />
+                <Route path="/analytics" element={<Analytics />} />
+                <Route path="/teams" element={<Teams />} />
+                <Route path="/brand-identity" element={<BrandIdentity />} />
+                <Route path="/business-plans" element={<BusinessPlans />} />
+                <Route path="/marketing-planner" element={<MarketingPlanner />} />
+                <Route path="/market-research" element={<MarketResearch />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
           </main>
         </div>
         
