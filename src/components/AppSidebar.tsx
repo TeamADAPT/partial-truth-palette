@@ -1,4 +1,4 @@
-import { Brain, Home, Briefcase, BarChart3, Users, Settings, Plus, Palette, FileText, Megaphone, TrendingUp } from "lucide-react";
+import { Brain, Home, Briefcase, BarChart3, Users, Settings, Plus, Palette, FileText, Megaphone, TrendingUp, Calendar, BookOpen, Lightbulb, CreditCard } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -25,6 +25,14 @@ const navItems = [
   { path: "/business-plans", label: "Business Plans", icon: FileText },
   { path: "/marketing-planner", label: "Marketing", icon: Megaphone },
   { path: "/market-research", label: "Market Research", icon: TrendingUp },
+  { path: "/calendar", label: "Calendar", icon: Calendar },
+];
+
+const toolsItems = [
+  { path: "/templates", label: "Templates", icon: BookOpen },
+  { path: "/brainstorming", label: "Brainstorming", icon: Lightbulb },
+  { path: "/personalization", label: "Personalization", icon: Settings },
+  { path: "/plans", label: "Plans", icon: CreditCard },
 ];
 
 interface AppSidebarProps {
@@ -63,6 +71,37 @@ export function AppSidebar({ onNewTask }: AppSidebarProps) {
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.path);
+                return (
+                  <SidebarMenuItem key={item.path}>
+                    <SidebarMenuButton asChild>
+                      <NavLink
+                        to={item.path}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
+                          active
+                            ? "bg-primary/10 text-primary border border-primary/20"
+                            : "text-muted-foreground hover:bg-primary/5 hover:text-foreground"
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" />
+                        {!collapsed && <span className="font-medium">{item.label}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-muted-foreground/70">
+            {!collapsed ? "Tools & Setup" : "Tools"}
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {toolsItems.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
                 return (
