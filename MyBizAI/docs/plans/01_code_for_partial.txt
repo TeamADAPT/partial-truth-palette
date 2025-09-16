@@ -1,0 +1,3322 @@
+build a full stack with the following code:
+
+const [taskTitle, setTaskTitle] = useState("") const [description, setDescription] = useState("") const [assignee, setAssignee] = useState("") const [assigneeType, setAssigneeType] = useState<"human" | "ai">("human") const [dueDate, setDueDate] = useState<Date>() const [priority, setPriority] = useState("medium") const [isRecurring, setIsRecurring] = useState(false) const [recurringFrequency, setRecurringFrequency] = useState("weekly") const [saveForLater, setSaveForLater] = useState(false)
+
+const teamMembers = [ { id: "1", name: "Sarah Johnson", role: "Project Manager" }, { id: "2", name: "Mike Chen", role: "Developer" }, { id: "3", name: "Emily Davis", role: "Designer" }, ]
+
+const aiAgents = [ { id: "ai-1", name: "Research Assistant", specialty: "Market Analysis" }, { id: "ai-2", name: "Content Creator", specialty: "Marketing Content" }, { id: "ai-3", name: "Data Analyst", specialty: "Financial Modeling" }, ]
+
+const handleSubmit = () => { // Handle task delegation logic here console.log({ taskTitle, description, assignee, assigneeType, dueDate, priority, isRecurring, recurringFrequency, saveForLater }) onOpenChange(false) }
+
+return ( <Dialog open={open} onOpenChange={onOpenChange}> <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto"> <DialogHeader> <DialogTitle className="flex items-center gap-2"> <Users className="h-5 w-5 text-blue-500" /> Delegate Task </DialogTitle> </DialogHeader>
+
+    <div className="space-y-6">
+      {/* Task Title */}
+      <div className="space-y-2">
+        <Label htmlFor="task-title">Task Title</Label>
+        <Input
+          id="task-title"
+          placeholder="Enter task title..."
+          value={taskTitle}
+          onChange={(e) => setTaskTitle(e.target.value)}
+        />
+      </div>
+
+      {/* Description */}
+      <div className="space-y-2">
+        <Label htmlFor="description">Description</Label>
+        <Textarea
+          id="description"
+          placeholder="Provide task details and requirements..."
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={3}
+        />
+      </div>
+
+      {/* Assignee Type Selection */}
+      <div className="space-y-3">
+        <Label>Assign To</Label>
+        <div className="flex gap-4">
+          <Button
+            type="button"
+            variant={assigneeType === "human" ? "default" : "outline"}
+            onClick={() => setAssigneeType("human")}
+            className="flex items-center gap-2"
+          >
+            <Users className="h-4 w-4" />
+            Team Member
+          </Button>
+          <Button
+            type="button"
+            variant={assigneeType === "ai" ? "default" : "outline"}
+            onClick={() => setAssigneeType("ai")}
+            className="flex items-center gap-2"
+          >
+            <Bot className="h-4 w-4" />
+            AI Agent
+          </Button>
+        </div>
+      </div>
+
+      {/* Assignee Selection */}
+      <div className="space-y-2">
+        <Label>
+          {assigneeType === "human" ? "Select Team Member" : "Select AI Agent"}
+        </Label>
+        <Select value={assignee} onValueChange={setAssignee}>
+          <SelectTrigger>
+            <SelectValue placeholder={`Choose ${assigneeType === "human" ? "team member" : "AI agent"}...`} />
+          </SelectTrigger>
+          <SelectContent>
+            {assigneeType === "human" 
+              ? teamMembers.map((member) => (
+                  <SelectItem key={member.id} value={member.id}>
+                    <div className="flex flex-col">
+                      <span>{member.name}</span>
+                      <span className="text-xs text-muted-foreground">{member.role}</span>
+                    </div>
+                  </SelectItem>
+                ))
+              : aiAgents.map((agent) => (
+                  <SelectItem key={agent.id} value={agent.id}>
+                    <div className="flex flex-col">
+                      <span>{agent.name}</span>
+                      <span className="text-xs text-muted-foreground">{agent.specialty}</span>
+                    </div>
+                  </SelectItem>
+                ))
+            }
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Due Date */}
+      <div className="space-y-2">
+        <Label>Due Date</Label>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "w-full justify-start text-left font-normal",
+                !dueDate && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {dueDate ? format(dueDate, "PPP") : "Select due date"}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={dueDate}
+              onSelect={setDueDate}
+              initialFocus
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
+
+      {/* Priority */}
+      <div className="space-y-2">
+        <Label>Priority</Label>
+        <Select value={priority} onValueChange={setPriority}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="low">
+              <div className="flex items-center gap-2">
+                <Flag className="h-4 w-4 text-green-500" />
+                Low Priority
+              </div>
+            </SelectItem>
+            <SelectItem value="medium">
+              <div className="flex items-center gap-2">
+                <Flag className="h-4 w-4 text-yellow-500" />
+                Medium Priority
+              </div>
+            </SelectItem>
+            <SelectItem value="high">
+              <div className="flex items-center gap-2">
+                <Flag className="h-4 w-4 text-red-500" />
+                High Priority
+              </div>
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Recurring Task */}
+      <div className="space-y-3">
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="recurring"
+            checked={isRecurring}
+            onCheckedChange={setIsRecurring}
+          />
+          <Label htmlFor="recurring" className="flex items-center gap-2">
+            <Clock className="h-4 w-4" />
+            Make this a recurring task
+          </Label>
+        </div>
+
+        {isRecurring && (
+          <Select value={recurringFrequency} onValueChange={setRecurringFrequency}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="daily">Daily</SelectItem>
+              <SelectItem value="weekly">Weekly</SelectItem>
+              <SelectItem value="monthly">Monthly</SelectItem>
+              <SelectItem value="quarterly">Quarterly</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
+      </div>
+
+      {/* Save for Later */}
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          id="save-for-later"
+          checked={saveForLater}
+          onCheckedChange={setSaveForLater}
+        />
+        <Label htmlFor="save-for-later">Save as template for later use</Label>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex gap-3 pt-4">
+        <Button onClick={handleSubmit} className="flex-1">
+          Delegate Task
+        </Button>
+        <Button variant="outline" onClick={() => onOpenChange(false)}>
+          Cancel
+        </Button>
+        <Button variant="ghost">
+          Save for Later
+        </Button>
+      </div>
+    </div>
+  </DialogContent>
+</Dialog>
+
+) } EOF
+
+/home/code/mybizai$ cat > app/projects/archived/page.tsx << 'EOF' "use client"
+
+import { useState } from "react" import { Button } from "@/components/ui/button" import { Input } from "@/components/ui/input" import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card" import { Badge } from "@/components/ui/badge" import { Checkbox } from "@/components/ui/checkbox" import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select" import { Archive, Search, Filter, RotateCcw, Trash2, Calendar, Users, CheckSquare, Square } from "lucide-react" import { format } from "date-fns"
+
+interface ArchivedProject { id: string name: string description: string archivedDate: Date originalDueDate: Date team: string[] category: string progress: number status: "completed" | "cancelled" | "paused" }
+
+const mockArchivedProjects: ArchivedProject[] = [ { id: "1", name: "E-commerce Platform MVP", description: "Complete e-commerce solution with payment integration and inventory management", archivedDate: new Date("2024-06-15"), originalDueDate: new Date("2024-05-30"), team: ["Sarah Johnson", "Mike Chen", "AI Assistant"], category: "Development", progress: 100, status: "completed" }, { id: "2", name: "Social Media Marketing Campaign", description: "Q2 social media strategy and content creation for brand awareness", archivedDate: new Date("2024-07-01"), originalDueDate: new Date("2024-06-30"), team: ["Emily Davis", "Content AI"], category: "Marketing", progress: 85, status: "cancelled" }, { id: "3", name: "Customer Feedback Analysis", description: "Comprehensive analysis of customer feedback and satisfaction metrics", archivedDate: new Date("2024-05-20"), originalDueDate: new Date("2024-05-15"), team: ["Data Analyst AI", "Research Team"], category: "Research", progress: 100, status: "completed" }, { id: "4", name: "Mobile App Prototype", description: "iOS and Android prototype for customer engagement app", archivedDate: new Date("2024-04-10"), originalDueDate: new Date("2024-04-30"), team: ["Mike Chen", "UI/UX AI"], category: "Development", progress: 60, status: "paused" } ]
+
+export default function ArchivedProjectsPage() { const [projects, setProjects] = useState(mockArchivedProjects) const [selectedProjects, setSelectedProjects] = useState<string[]>([]) const [searchQuery, setSearchQuery] = useState("") const [statusFilter, setStatusFilter] = useState("all") const [categoryFilter, setCategoryFilter] = useState("all")
+
+const filteredProjects = projects.filter(project => { const matchesSearch = project.name.toLowerCase().includes(searchQuery.toLowerCase()) || project.description.toLowerCase().includes(searchQuery.toLowerCase()) const matchesStatus = statusFilter === "all" || project.status === statusFilter const matchesCategory = categoryFilter === "all" || project.category === categoryFilter
+
+return matchesSearch && matchesStatus && matchesCategory
+
+})
+
+const handleSelectProject = (projectId: string) => { setSelectedProjects(prev => prev.includes(projectId) ? prev.filter(id => id !== projectId) : [...prev, projectId] ) }
+
+const handleSelectAll = () => { if (selectedProjects.length === filteredProjects.length) { setSelectedProjects([]) } else { setSelectedProjects(filteredProjects.map(p => p.id)) } }
+
+const handleRestoreSelected = () => { // Handle restore logic console.log("Restoring projects:", selectedProjects) setSelectedProjects([]) }
+
+const handleDeleteSelected = () => { // Handle delete logic console.log("Deleting projects:", selectedProjects) setProjects(prev => prev.filter(p => !selectedProjects.includes(p.id))) setSelectedProjects([]) }
+
+const handleRestoreProject = (projectId: string) => { console.log("Restoring project:", projectId) }
+
+const handleDeleteProject = (projectId: string) => { setProjects(prev => prev.filter(p => p.id !== projectId)) }
+
+const getStatusColor = (status: string) => { switch (status) { case "completed": return "bg-green-500/20 text-green-400 border-green-500/30" case "cancelled": return "bg-red-500/20 text-red-400 border-red-500/30" case "paused": return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" default: return "bg-gray-500/20 text-gray-400 border-gray-500/30" } }
+
+return ( <div className="min-h-screen bg-gray-950 text-white p-6"> <div className="max-w-7xl mx-auto space-y-6"> {/* Header */} <div className="flex items-center justify-between"> <div> <h1 className="text-3xl font-bold flex items-center gap-3"> <Archive className="h-8 w-8 text-blue-500" /> Archived Projects </h1> <p className="text-gray-400 mt-2"> Manage your completed, cancelled, and paused projects </p> </div> </div>
+
+    {/* Filters and Search */}
+    <div className="flex flex-col sm:flex-row gap-4">
+      <div className="relative flex-1">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+        <Input
+          placeholder="Search archived projects..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-10 bg-gray-900 border-gray-700"
+        />
+      </div>
+      
+      <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <SelectTrigger className="w-48 bg-gray-900 border-gray-700">
+          <Filter className="h-4 w-4 mr-2" />
+          <SelectValue placeholder="Filter by status" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All Status</SelectItem>
+          <SelectItem value="completed">Completed</SelectItem>
+          <SelectItem value="cancelled">Cancelled</SelectItem>
+          <SelectItem value="paused">Paused</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+        <SelectTrigger className="w-48 bg-gray-900 border-gray-700">
+          <SelectValue placeholder="Filter by category" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All Categories</SelectItem>
+          <SelectItem value="Development">Development</SelectItem>
+          <SelectItem value="Marketing">Marketing</SelectItem>
+          <SelectItem value="Research">Research</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+
+    {/* Bulk Actions */}
+    {selectedProjects.length > 0 && (
+      <div className="flex items-center gap-4 p-4 bg-gray-900 rounded-lg border border-gray-700">
+        <span className="text-sm text-gray-400">
+          {selectedProjects.length} project{selectedProjects.length !== 1 ? 's' : ''} selected
+        </span>
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleRestoreSelected}
+            className="flex items-center gap-2"
+          >
+            <RotateCcw className="h-4 w-4" />
+            Restore Selected
+          </Button>
+          <Button
+            size="sm"
+            variant="destructive"
+            onClick={handleDeleteSelected}
+            className="flex items-center gap-2"
+          >
+            <Trash2 className="h-4 w-4" />
+            Delete Selected
+          </Button>
+        </div>
+      </div>
+    )}
+
+    {/* Select All */}
+    <div className="flex items-center gap-2">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={handleSelectAll}
+        className="flex items-center gap-2"
+      >
+        {selectedProjects.length === filteredProjects.length && filteredProjects.length > 0 ? (
+          <CheckSquare className="h-4 w-4" />
+        ) : (
+          <Square className="h-4 w-4" />
+        )}
+        Select All ({filteredProjects.length})
+      </Button>
+    </div>
+
+    {/* Projects Grid */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {filteredProjects.map((project) => (
+        <Card key={project.id} className="bg-gray-900 border-gray-700 hover:border-gray-600 transition-colors">
+          <CardHeader className="pb-3">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <Checkbox
+                  checked={selectedProjects.includes(project.id)}
+                  onCheckedChange={() => handleSelectProject(project.id)}
+                />
+                <div>
+                  <CardTitle className="text-lg">{project.name}</CardTitle>
+                  <Badge className={`mt-1 ${getStatusColor(project.status)}`}>
+                    {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          
+          <CardContent className="space-y-4">
+            <p className="text-gray-400 text-sm line-clamp-2">
+              {project.description}
+            </p>
+
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm text-gray-400">
+                <Calendar className="h-4 w-4" />
+                Archived: {format(project.archivedDate, "MMM dd, yyyy")}
+              </div>
+              
+              <div className="flex items-center gap-2 text-sm text-gray-400">
+                <Users className="h-4 w-4" />
+                {project.team.slice(0, 2).join(", ")}
+                {project.team.length > 2 && ` +${project.team.length - 2} more`}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Progress</span>
+                <span className="text-white">{project.progress}%</span>
+              </div>
+              <div className="w-full bg-gray-700 rounded-full h-2">
+                <div 
+                  className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${project.progress}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => handleRestoreProject(project.id)}
+                className="flex-1 flex items-center gap-2"
+              >
+                <RotateCcw className="h-4 w-4" />
+                Restore
+              </Button>
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => handleDeleteProject(project.id)}
+                className="flex items-center gap-2"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+
+    {filteredProjects.length === 0 && (
+      <div className="text-center py-12">
+        <Archive className="h-16 w-16 text-gray-600 mx-auto mb-4" />
+        <h3 className="text-xl font-semibold text-gray-400 mb-2">No archived projects found</h3>
+        <p className="text-gray-500">
+          {searchQuery || statusFilter !== "all" || categoryFilter !== "all" 
+            ? "Try adjusting your filters to see more results."
+            : "Your archived projects will appear here when you archive them."
+          }
+        </p>
+      </div>
+    )}
+  </div>
+</div>
+
+) } EOF
+
+/home/code/mybizai$ cat > app/resources/page.tsx << 'EOF' "use client"
+
+import { useState } from "react" import { Button } from "@/components/ui/button" import { Input } from "@/components/ui/input" import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card" import { Badge } from "@/components/ui/badge" import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs" import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select" import { BookOpen, Search, Download, Heart, Eye, Clock, FileText, Video, BarChart3, Lightbulb, TrendingUp, Users, Star } from "lucide-react"
+
+interface Resource { id: string title: string description: string type: "template" | "case-study" | "report" | "guide" | "video" category: string tags: string[] downloadCount: number rating: number readTime: string publishedDate: Date isFavorited: boolean isNew: boolean }
+
+const mockResources: Resource[] = [ { id: "1", title: "Complete Business Plan Template", description: "Comprehensive business plan template with financial projections, market analysis, and strategic planning sections.", type: "template", category: "Business Planning", tags: ["startup", "planning", "finance"], downloadCount: 2847, rating: 4.8, readTime: "15 min", publishedDate: new Date("2024-07-01"), isFavorited: true, isNew: false }, { id: "2", title: "SaaS Startup Success Story: From Idea to $10M ARR", description: "Detailed case study of how a SaaS startup grew from concept to $10M annual recurring revenue in 3 years.", type: "case-study", category: "Success Stories", tags: ["saas", "growth", "revenue"], downloadCount: 1923, rating: 4.9, readTime: "25 min", publishedDate: new Date("2024-06-15"), isFavorited: false, isNew: true }, { id: "3", title: "2024 E-commerce Market Analysis Report", description: "In-depth analysis of e-commerce trends, consumer behavior, and market opportunities for 2024.", type: "report", category: "Market Research", tags: ["ecommerce", "trends", "analysis"], downloadCount: 3156, rating: 4.7, readTime: "45 min", publishedDate: new Date("2024-05-20"), isFavorited: true, isNew: false }, { id: "4", title: "AI-Powered Marketing Strategy Guide", description: "Step-by-step guide to implementing AI tools in your marketing strategy for better ROI and customer engagement.", type: "guide", category: "Marketing", tags: ["ai", "marketing", "strategy"], downloadCount: 1654, rating: 4.6, readTime: "30 min", publishedDate: new Date("2024-07-10"), isFavorited: false, isNew: true }, { id: "5", title: "Fundraising Masterclass: Pitch Deck Essentials", description: "Video masterclass covering the essential elements of a winning pitch deck and fundraising strategy.", type: "video", category: "Fundraising", tags: ["fundraising", "pitch", "investors"], downloadCount: 987, rating: 4.9, readTime: "60 min", publishedDate: new Date("2024-06-30"), isFavorited: false, isNew: false }, { id: "6", title: "Financial Modeling Template for Startups", description: "Excel template with pre-built formulas for revenue forecasting, expense tracking, and scenario planning.", type: "template", category: "Finance", tags: ["finance", "modeling", "excel"], downloadCount: 2234, rating: 4.5, readTime: "20 min", publishedDate: new Date("2024-05-05"), isFavorited: true, isNew: false } ]
+
+const recentlyViewed = [ { id: "1", title: "Complete Business Plan Template", viewedAt: new Date() }, { id: "3", title: "2024 E-commerce Market Analysis Report", viewedAt: new Date(Date.now() - 86400000) }, { id: "4", title: "AI-Powered Marketing Strategy Guide", viewedAt: new Date(Date.now() - 172800000) } ]
+
+export default function ResourceLibraryPage() { const [resources, setResources] = useState(mockResources) const [searchQuery, setSearchQuery] = useState("") const [categoryFilter, setCategoryFilter] = useState("all") const [typeFilter, setTypeFilter] = useState("all") const [sortBy, setSortBy] = useState("newest")
+
+const categories = Array.from(new Set(resources.map(r => r.category))) const types = Array.from(new Set(resources.map(r => r.type)))
+
+const filteredResources = resources .filter(resource => { const matchesSearch = resource.title.toLowerCase().includes(searchQuery.toLowerCase()) || resource.description.toLowerCase().includes(searchQuery.toLowerCase()) || resource.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())) const matchesCategory = categoryFilter === "all" || resource.category === categoryFilter const matchesType = typeFilter === "all" || resource.type === typeFilter
+
+  return matchesSearch && matchesCategory && matchesType
+})
+.sort((a, b) => {
+  switch (sortBy) {
+    case "newest":
+      return b.publishedDate.getTime() - a.publishedDate.getTime()
+    case "popular":
+      return b.downloadCount - a.downloadCount
+    case "rating":
+      return b.rating - a.rating
+    default:
+      return 0
+  }
+})
+
+const toggleFavorite = (resourceId: string) => { setResources(prev => prev.map(resource => resource.id === resourceId ? { ...resource, isFavorited: !resource.isFavorited } : resource )) }
+
+const getTypeIcon = (type: string) => { switch (type) { case "template": return <FileText className="h-4 w-4" /> case "case-study": return <Lightbulb className="h-4 w-4" /> case "report": return <BarChart3 className="h-4 w-4" /> case "guide": return <BookOpen className="h-4 w-4" /> case "video": return <Video className="h-4 w-4" /> default: return <FileText className="h-4 w-4" /> } }
+
+const getTypeColor = (type: string) => { switch (type) { case "template": return "bg-blue-500/20 text-blue-400 border-blue-500/30" case "case-study": return "bg-green-500/20 text-green-400 border-green-500/30" case "report": return "bg-purple-500/20 text-purple-400 border-purple-500/30" case "guide": return "bg-orange-500/20 text-orange-400 border-orange-500/30" case "video": return "bg-red-500/20 text-red-400 border-red-500/30" default: return "bg-gray-500/20 text-gray-400 border-gray-500/30" } }
+
+return ( <div className="min-h-screen bg-gray-950 text-white p-6"> <div className="max-w-7xl mx-auto space-y-6"> {/* Header */} <div className="flex items-center justify-between"> <div> <h1 className="text-3xl font-bold flex items-center gap-3"> <BookOpen className="h-8 w-8 text-blue-500" /> Resource Library </h1> <p className="text-gray-400 mt-2"> Curated business insights, templates, and case studies to accelerate your growth </p> </div> </div>
+
+    <Tabs defaultValue="all" className="space-y-6">
+      <TabsList className="bg-gray-900 border-gray-700">
+        <TabsTrigger value="all">All Resources</TabsTrigger>
+        <TabsTrigger value="favorites">Favorites</TabsTrigger>
+        <TabsTrigger value="recent">Recently Viewed</TabsTrigger>
+      </TabsList>
+
+      <TabsContent value="all" className="space-y-6">
+        {/* Filters and Search */}
+        <div className="flex flex-col lg:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Search resources, templates, case studies..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 bg-gray-900 border-gray-700"
+            />
+          </div>
+          
+          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <SelectTrigger className="w-48 bg-gray-900 border-gray-700">
+              <SelectValue placeholder="All Categories" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              {categories.map(category => (
+                <SelectItem key={category} value={category}>{category}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={typeFilter} onValueChange={setTypeFilter}>
+            <SelectTrigger className="w-48 bg-gray-900 border-gray-700">
+              <SelectValue placeholder="All Types" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Types</SelectItem>
+              {types.map(type => (
+                <SelectItem key={type} value={type}>
+                  <div className="flex items-center gap-2">
+                    {getTypeIcon(type)}
+                    {type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ')}
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={sortBy} onValueChange={setSortBy}>
+            <SelectTrigger className="w-48 bg-gray-900 border-gray-700">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="newest">Newest First</SelectItem>
+              <SelectItem value="popular">Most Popular</SelectItem>
+              <SelectItem value="rating">Highest Rated</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Resources Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredResources.map((resource) => (
+            <Card key={resource.id} className="bg-gray-900 border-gray-700 hover:border-gray-600 transition-colors group">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-2">
+                    <Badge className={getTypeColor(resource.type)}>
+                      <div className="flex items-center gap-1">
+                        {getTypeIcon(resource.type)}
+                        {resource.type.replace('-', ' ')}
+                      </div>
+                    </Badge>
+                    {resource.isNew && (
+                      <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
+                        New
+                      </Badge>
+                    )}
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => toggleFavorite(resource.id)}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <Heart className={`h-4 w-4 ${resource.isFavorited ? 'fill-red-500 text-red-500' : ''}`} />
+                  </Button>
+                </div>
+                <CardTitle className="text-lg line-clamp-2">{resource.title}</CardTitle>
+              </CardHeader>
+              
+              <CardContent className="space-y-4">
+                <p className="text-gray-400 text-sm line-clamp-3">
+                  {resource.description}
+                </p>
+
+                <div className="flex flex-wrap gap-1">
+                  {resource.tags.slice(0, 3).map(tag => (
+                    <Badge key={tag} variant="outline" className="text-xs">
+                      {tag}
+                    </Badge>
+                  ))}
+                  {resource.tags.length > 3 && (
+                    <Badge variant="outline" className="text-xs">
+                      +{resource.tags.length - 3}
+                    </Badge>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between text-sm text-gray-400">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1">
+                      <Download className="h-4 w-4" />
+                      {resource.downloadCount.toLocaleString()}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+                      {resource.rating}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Clock className="h-4 w-4" />
+                    {resource.readTime}
+                  </div>
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                  <Button size="sm" className="flex-1 flex items-center gap-2">
+                    <Eye className="h-4 w-4" />
+                    View
+                  </Button>
+                  <Button size="sm" variant="outline" className="flex items-center gap-2">
+                    <Download className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </TabsContent>
+
+      <TabsContent value="favorites" className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {resources.filter(r => r.isFavorited).map((resource) => (
+            <Card key={resource.id} className="bg-gray-900 border-gray-700 hover:border-gray-600 transition-colors">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <Badge className={getTypeColor(resource.type)}>
+                    <div className="flex items-center gap-1">
+                      {getTypeIcon(resource.type)}
+                      {resource.type.replace('-', ' ')}
+                    </div>
+                  </Badge>
+                  <Heart className="h-4 w-4 fill-red-500 text-red-500" />
+                </div>
+                <CardTitle className="text-lg line-clamp-2">{resource.title}</CardTitle>
+              </CardHeader>
+              
+              <CardContent className="space-y-4">
+                <p className="text-gray-400 text-sm line-clamp-3">
+                  {resource.description}
+                </p>
+
+                <div className="flex gap-2 pt-2">
+                  <Button size="sm" className="flex-1 flex items-center gap-2">
+                    <Eye className="h-4 w-4" />
+                    View
+                  </Button>
+                  <Button size="sm" variant="outline" className="flex items-center gap-2">
+                    <Download className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </TabsContent>
+
+      <TabsContent value="recent" className="space-y-6">
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold">Recently Viewed</h3>
+          {recentlyViewed.map((item) => {
+            const resource = resources.find(r => r.id === item.id)
+            if (!resource) return null
+            
+            return (
+              <Card key={item.id} className="bg-gray-900 border-gray-700">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        {getTypeIcon(resource.type)}
+                        <span className="font-medium">{resource.title}</span>
+                      </div>
+                      <Badge className={getTypeColor(resource.type)}>
+                        {resource.type.replace('-', ' ')}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span className="text-sm text-gray-400">
+                        Viewed {item.viewedAt.toLocaleDateString()}
+                      </span>
+                      <Button size="sm" variant="outline">
+                        View Again
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          })}
+        </div>
+      </TabsContent>
+    </Tabs>
+
+    {filteredResources.length === 0 && (
+      <div className="text-center py-12">
+        <BookOpen className="h-16 w-16 text-gray-600 mx-auto mb-4" />
+        <h3 className="text-xl font-semibold text-gray-400 mb-2">No resources found</h3>
+        <p className="text-gray-500">
+          Try adjusting your search terms or filters to find what you're looking for.
+        </p>
+      </div>
+    )}
+  </div>
+</div>
+
+) } EOF
+
+/home/code/mybizai$ cat > app/projects/[id]/page.tsx << 'EOF' "use client"
+
+import { useState } from "react" import { Button } from "@/components/ui/button" import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card" import { Badge } from "@/components/ui/badge" import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs" import { Progress } from "@/components/ui/progress" import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar" import { Textarea } from "@/components/ui/textarea" import { Input } from "@/components/ui/input" import { Label } from "@/components/ui/label" import { TaskDelegationModal } from "@/components/modals/task-delegation-modal" import { ArrowLeft, Calendar, Users, Target, TrendingUp, CheckCircle, Clock, AlertCircle, Plus, FileText, Video, Mic, Download, Share, Edit, Trash2, Bot, Sparkles } from "lucide-react" import { format } from "date-fns"
+
+interface Task { id: string title: string description: string status: "todo" | "in-progress" | "completed" priority: "low" | "medium" | "high" assignee: string assigneeType: "human" | "ai" dueDate: Date createdAt: Date }
+
+interface Document { id: string name: string type: string size: string uploadedBy: string uploadedAt: Date url: string }
+
+interface MeetingNote { id: string title: string date: Date attendees: string[] content: string aiSummary?: string duration: string }
+
+const mockProject = { id: "project-alpha", name: "Project Alpha", description: "Revolutionary AI-powered customer service platform that automates support tickets and provides intelligent responses.", status: "in-progress", progress: 68, startDate: new Date("2024-06-01"), dueDate: new Date("2024-09-30"), team: [ { id: "1", name: "Sarah Johnson", role: "Project Manager", avatar: "/avatars/sarah.jpg" }, { id: "2", name: "Mike Chen", role: "Lead Developer", avatar: "/avatars/mike.jpg" }, { id: "3", name: "Emily Davis", role: "UI/UX Designer", avatar: "/avatars/emily.jpg" }, { id: "4", name: "AI Assistant", role: "Research & Analysis", avatar: "/avatars/ai.jpg", type: "ai" } ], budget: 150000, spent: 89500, milestones: [ { id: "1", title: "Research & Planning", status: "completed", dueDate: new Date("2024-06-15") }, { id: "2", title: "MVP Development", status: "in-progress", dueDate: new Date("2024-08-15") }, { id: "3", title: "Testing & QA", status: "pending", dueDate: new Date("2024-09-15") }, { id: "4", title: "Launch", status: "pending", dueDate: new Date("2024-09-30") } ] }
+
+const mockTasks: Task[] = [ { id: "1", title: "Design user authentication flow", description: "Create wireframes and mockups for the login/signup process", status: "completed", priority: "high", assignee: "Emily Davis", assigneeType: "human", dueDate: new Date("2024-07-15"), createdAt: new Date("2024-07-01") }, { id: "2", title: "Implement AI response engine", description: "Develop the core AI system for generating automated customer responses", status: "in-progress", priority: "high", assignee: "Mike Chen", assigneeType: "human", dueDate: new Date("2024-08-01"), createdAt: new Date("2024-07-10") }, { id: "3", title: "Market research analysis", description: "Analyze competitor landscape and identify market opportunities", status: "completed", priority: "medium", assignee: "AI Assistant", assigneeType: "ai", dueDate: new Date("2024-07-20"), createdAt: new Date("2024-07-05") }, { id: "4", title: "Database schema design", description: "Design and implement the database structure for customer data", status: "todo", priority: "high", assignee: "Mike Chen", assigneeType: "human", dueDate: new Date("2024-08-10"), createdAt: new Date("2024-07-25") } ]
+
+const mockDocuments: Document[] = [ { id: "1", name: "Project Requirements Document", type: "PDF", size: "2.4 MB", uploadedBy: "Sarah Johnson", uploadedAt: new Date("2024-06-05"), url: "#" }, { id: "2", name: "UI Mockups v2.1", type: "Figma", size: "15.7 MB", uploadedBy: "Emily Davis", uploadedAt: new Date("2024-07-12"), url: "#" }, { id: "3", name: "Technical Architecture", type: "PDF", size: "1.8 MB", uploadedBy: "Mike Chen", uploadedAt: new Date("2024-06-20"), url: "#" }, { id: "4", name: "Market Analysis Report", type: "DOCX", size: "3.2 MB", uploadedBy: "AI Assistant", uploadedAt: new Date("2024-07-18"), url: "#" } ]
+
+const mockMeetingNotes: MeetingNote[] = [ { id: "1", title: "Project Kickoff Meeting", date: new Date("2024-06-03"), attendees: ["Sarah Johnson", "Mike Chen", "Emily Davis"], content: "Discussed project scope, timeline, and initial requirements. Agreed on MVP features and development approach.", duration: "1h 30m" }, { id: "2", title: "Sprint Planning - Week 6", date: new Date("2024-07-15"), attendees: ["Sarah Johnson", "Mike Chen", "Emily Davis", "AI Assistant"], content: "Reviewed progress on authentication system. Discussed AI integration challenges and potential solutions. Planned next sprint tasks.", aiSummary: "Key decisions: Prioritize AI response accuracy over speed. Implement user feedback loop. Next sprint focus: core AI engine development.", duration: "45m" }, { id: "3", title: "Design Review Session", date: new Date("2024-07-22"), attendees: ["Sarah Johnson", "Emily Davis"], content: "Reviewed latest UI mockups and user flow. Discussed accessibility requirements and mobile responsiveness.", duration: "1h 15m" } ]
+
+export default function ProjectDetailPage({ params }: { params: { id: string } }) { const [showTaskModal, setShowTaskModal] = useState(false) const [newMeetingNote, setNewMeetingNote] = useState("") const [isGeneratingAISummary, setIsGeneratingAISummary] = useState(false)
+
+const getStatusColor = (status: string) => { switch (status) { case "completed": return "bg-green-500/20 text-green-400 border-green-500/30" case "in-progress": return "bg-blue-500/20 text-blue-400 border-blue-500/30" case "todo": return "bg-gray-500/20 text-gray-400 border-gray-500/30" case "pending": return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" default: return "bg-gray-500/20 text-gray-400 border-gray-500/30" } }
+
+const getPriorityColor = (priority: string) => { switch (priority) { case "high": return "bg-red-500/20 text-red-400 border-red-500/30" case "medium": return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" case "low": return "bg-green-500/20 text-green-400 border-green-500/30" default: return "bg-gray-500/20 text-gray-400 border-gray-500/30" } }
+
+const generateAISummary = async (noteId: string) => { setIsGeneratingAISummary(true) // Simulate AI processing setTimeout(() => { setIsGeneratingAISummary(false) // In real app, this would update the meeting note with AI summary }, 3000) }
+
+return ( <div className="min-h-screen bg-gray-950 text-white p-6"> <div className="max-w-7xl mx-auto space-y-6"> {/* Header */} <div className="flex items-center gap-4"> <Button variant="ghost" size="sm"> <ArrowLeft className="h-4 w-4 mr-2" /> Back to Projects </Button> </div>
+
+    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div>
+        <h1 className="text-3xl font-bold">{mockProject.name}</h1>
+        <p className="text-gray-400 mt-2 max-w-2xl">{mockProject.description}</p>
+      </div>
+      <div className="flex items-center gap-3">
+        <Badge className={getStatusColor(mockProject.status)}>
+          {mockProject.status.replace('-', ' ')}
+        </Badge>
+        <Button onClick={() => setShowTaskModal(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Delegate Task
+        </Button>
+      </div>
+    </div>
+
+    {/* Project Stats */}
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <Card className="bg-gray-900 border-gray-700">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-3">
+            <Target className="h-8 w-8 text-blue-500" />
+            <div>
+              <p className="text-sm text-gray-400">Progress</p>
+              <p className="text-2xl font-bold">{mockProject.progress}%</p>
+            </div>
+          </div>
+          <Progress value={mockProject.progress} className="mt-3" />
+        </CardContent>
+      </Card>
+
+      <Card className="bg-gray-900 border-gray-700">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-3">
+            <Calendar className="h-8 w-8 text-green-500" />
+            <div>
+              <p className="text-sm text-gray-400">Due Date</p>
+              <p className="text-lg font-semibold">{format(mockProject.dueDate, "MMM dd, yyyy")}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-gray-900 border-gray-700">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-3">
+            <Users className="h-8 w-8 text-purple-500" />
+            <div>
+              <p className="text-sm text-gray-400">Team Size</p>
+              <p className="text-2xl font-bold">{mockProject.team.length}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-gray-900 border-gray-700">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-3">
+            <TrendingUp className="h-8 w-8 text-orange-500" />
+            <div>
+              <p className="text-sm text-gray-400">Budget Used</p>
+              <p className="text-lg font-semibold">
+                ${(mockProject.spent / 1000).toFixed(0)}k / ${(mockProject.budget / 1000).toFixed(0)}k
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+
+    {/* Tabs */}
+    <Tabs defaultValue="overview" className="space-y-6">
+      <TabsList className="bg-gray-900 border-gray-700">
+        <TabsTrigger value="overview">Overview</TabsTrigger>
+        <TabsTrigger value="tasks">Tasks</TabsTrigger>
+        <TabsTrigger value="documents">Documents</TabsTrigger>
+        <TabsTrigger value="meetings">Meeting Notes</TabsTrigger>
+      </TabsList>
+
+      <TabsContent value="overview" className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Team Members */}
+          <Card className="bg-gray-900 border-gray-700">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Team Members
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {mockProject.team.map((member) => (
+                <div key={member.id} className="flex items-center gap-3">
+                  <Avatar>
+                    <AvatarImage src={member.avatar} />
+                    <AvatarFallback>
+                      {member.type === "ai" ? <Bot className="h-4 w-4" /> : member.name.split(' ').map(n => n[0]).join('')}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <p className="font-medium flex items-center gap-2">
+                      {member.name}
+                      {member.type === "ai" && <Bot className="h-4 w-4 text-blue-500" />}
+                    </p>
+                    <p className="text-sm text-gray-400">{member.role}</p>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Milestones */}
+          <Card className="bg-gray-900 border-gray-700">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Target className="h-5 w-5" />
+                Milestones
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {mockProject.milestones.map((milestone) => (
+                <div key={milestone.id} className="flex items-center gap-3">
+                  <div className="flex-shrink-0">
+                    {milestone.status === "completed" ? (
+                      <CheckCircle className="h-5 w-5 text-green-500" />
+                    ) : milestone.status === "in-progress" ? (
+                      <Clock className="h-5 w-5 text-blue-500" />
+                    ) : (
+                      <AlertCircle className="h-5 w-5 text-gray-500" />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium">{milestone.title}</p>
+                    <p className="text-sm text-gray-400">
+                      Due: {format(milestone.dueDate, "MMM dd, yyyy")}
+                    </p>
+                  </div>
+                  <Badge className={getStatusColor(milestone.status)}>
+                    {milestone.status.replace('-', ' ')}
+                  </Badge>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+      </TabsContent>
+
+      <TabsContent value="tasks" className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h3 className="text-xl font-semibold">Project Tasks</h3>
+          <Button onClick={() => setShowTaskModal(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Task
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {mockTasks.map((task) => (
+            <Card key={task.id} className="bg-gray-900 border-gray-700">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <CardTitle className="text-lg line-clamp-2">{task.title}</CardTitle>
+                  <div className="flex gap-1">
+                    <Badge className={getStatusColor(task.status)}>
+                      {task.status.replace('-', ' ')}
+                    </Badge>
+                    <Badge className={getPriorityColor(task.priority)}>
+                      {task.priority}
+                    </Badge>
+                  </div>
+                </div>
+              </CardHeader>
+              
+              <CardContent className="space-y-4">
+                <p className="text-gray-400 text-sm line-clamp-2">
+                  {task.description}
+                </p>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-gray-400">Assigned to:</span>
+                    <div className="flex items-center gap-1">
+                      {task.assigneeType === "ai" && <Bot className="h-4 w-4 text-blue-500" />}
+                      <span>{task.assignee}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 text-sm text-gray-400">
+                    <Calendar className="h-4 w-4" />
+                    Due: {format(task.dueDate, "MMM dd, yyyy")}
+                  </div>
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                  <Button size="sm" variant="outline" className="flex-1">
+                    <Edit className="h-4 w-4 mr-1" />
+                    Edit
+                  </Button>
+                  <Button size="sm" variant="ghost">
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </TabsContent>
+
+      <TabsContent value="documents" className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h3 className="text-xl font-semibold">Project Documents</h3>
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Upload Document
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {mockDocuments.map((doc) => (
+            <Card key={doc.id} className="bg-gray-900 border-gray-700">
+              <CardContent className="p-6">
+                <div className="flex items-start gap-3">
+                  <FileText className="h-8 w-8 text-blue-500 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium truncate">{doc.name}</h4>
+                    <p className="text-sm text-gray-400">{doc.type} • {doc.size}</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Uploaded by {doc.uploadedBy} on {format(doc.uploadedAt, "MMM dd, yyyy")}
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex gap-2 mt-4">
+                  <Button size="sm" variant="outline" className="flex-1">
+                    <Download className="h-4 w-4 mr-1" />
+                    Download
+                  </Button>
+                  <Button size="sm" variant="ghost">
+                    <Share className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </TabsContent>
+
+      <TabsContent value="meetings" className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h3 className="text-xl font-semibold">Meeting Notes</h3>
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Meeting Note
+          </Button>
+        </div>
+
+        <div className="space-y-6">
+          {mockMeetingNotes.map((note) => (
+            <Card key={note.id} className="bg-gray-900 border-gray-700">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Video className="h-5 w-5" />
+                      {note.title}
+                    </CardTitle>
+                    <p className="text-sm text-gray-400 mt-1">
+                      {format(note.date, "MMMM dd, yyyy")} • {note.duration} • {note.attendees.length} attendees
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline">
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button size="sm" variant="ghost">
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              
+              <CardContent className="space-y-4">
+                <div>
+                  <h5 className="font-medium mb-2">Attendees:</h5>
+                  <div className="flex flex-wrap gap-2">
+                    {note.attendees.map((attendee) => (
+                      <Badge key={attendee} variant="outline">{attendee}</Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h5 className="font-medium mb-2">Notes:</h5>
+                  <p className="text-gray-300 text-sm leading-relaxed">{note.content}</p>
+                </div>
+
+                {note.aiSummary ? (
+                  <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+                    <h5 className="font-medium mb-2 flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-blue-500" />
+                      AI Summary
+                    </h5>
+                    <p className="text-blue-100 text-sm">{note.aiSummary}</p>
+                  </div>
+                ) : (
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => generateAISummary(note.id)}
+                    disabled={isGeneratingAISummary}
+                    className="flex items-center gap-2"
+                  >
+                    <Sparkles className="h-4 w-4" />
+                    {isGeneratingAISummary ? "Generating..." : "Generate AI Summary"}
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </TabsContent>
+    </Tabs>
+
+    <TaskDelegationModal 
+      open={showTaskModal} 
+      onOpenChange={setShowTaskModal}
+    />
+  </div>
+</div>
+
+) } EOF
+
+/home/code/mybizai$ mkdir -p app/projects/[id]
+
+/home/code/mybizai$ cat > app/projects/[id]/page.tsx << 'EOF' "use client"
+
+import { useState } from "react" import { Button } from "@/components/ui/button" import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card" import { Badge } from "@/components/ui/badge" import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs" import { Progress } from "@/components/ui/progress" import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar" import { TaskDelegationModal } from "@/components/modals/task-delegation-modal" import { ArrowLeft, Calendar, Users, Target, TrendingUp, CheckCircle, Clock, AlertCircle, Plus, FileText, Download, Share, Edit, Trash2, Bot, Sparkles } from "lucide-react" import { format } from "date-fns"
+
+interface Task { id: string title: string description: string status: "todo" | "in-progress" | "completed" priority: "low" | "medium" | "high" assignee: string assigneeType: "human" | "ai" dueDate: Date }
+
+interface Document { id: string name: string type: string size: string uploadedBy: string uploadedAt: Date url: string }
+
+interface MeetingNote { id: string title: string date: Date attendees: string[] content: string aiSummary?: string duration: string }
+
+const mockProject = { id: "project-alpha", name: "Project Alpha", description: "Revolutionary AI-powered customer service platform that automates support tickets and provides intelligent responses.", status: "in-progress", progress: 68, startDate: new Date("2024-06-01"), dueDate: new Date("2024-09-30"), team: [ { id: "1", name: "Sarah Johnson", role: "Project Manager", avatar: "/avatars/sarah.jpg" }, { id: "2", name: "Mike Chen", role: "Lead Developer", avatar: "/avatars/mike.jpg" }, { id: "3", name: "Emily Davis", role: "UI/UX Designer", avatar: "/avatars/emily.jpg" }, { id: "4", name: "AI Assistant", role: "Research & Analysis", avatar: "/avatars/ai.jpg", type: "ai" } ], budget: 150000, spent: 89500, milestones: [ { id: "1", title: "Research & Planning", status: "completed", dueDate: new Date("2024-06-15") }, { id: "2", title: "MVP Development", status: "in-progress", dueDate: new Date("2024-08-15") }, { id: "3", title: "Testing & QA", status: "pending", dueDate: new Date("2024-09-15") }, { id: "4", title: "Launch", status: "pending", dueDate: new Date("2024-09-30") } ] }
+
+const mockTasks: Task[] = [ { id: "1", title: "Design user authentication flow", description: "Create wireframes and mockups for the login/signup process", status: "completed", priority: "high", assignee: "Emily Davis", assigneeType: "human", dueDate: new Date("2024-07-15") }, { id: "2", title: "Implement AI response engine", description: "Develop the core AI system for generating automated customer responses", status: "in-progress", priority: "high", assignee: "Mike Chen", assigneeType: "human", dueDate: new Date("2024-08-01") }, { id: "3", title: "Market research analysis", description: "Analyze competitor landscape and identify market opportunities", status: "completed", priority: "medium", assignee: "AI Assistant", assigneeType: "ai", dueDate: new Date("2024-07-20") }, { id: "4", title: "Database schema design", description: "Design and implement the database structure for customer data", status: "todo", priority: "high", assignee: "Mike Chen", assigneeType: "human", dueDate: new Date("2024-08-10") } ]
+
+const mockDocuments: Document[] = [ { id: "1", name: "Project Requirements Document", type: "PDF", size: "2.4 MB", uploadedBy: "Sarah Johnson", uploadedAt: new Date("2024-06-05"), url: "#" }, { id: "2", name: "UI Mockups v2.1", type: "Figma", size: "15.7 MB", uploadedBy: "Emily Davis", uploadedAt: new Date("2024-07-12"), url: "#" }, { id: "3", name: "Technical Architecture", type: "PDF", size: "1.8 MB", uploadedBy: "Mike Chen", uploadedAt: new Date("2024-06-20"), url: "#" }, { id: "4", name: "Market Analysis Report", type: "DOCX", size: "3.2 MB", uploadedBy: "AI Assistant", uploadedAt: new Date("2024-07-18"), url: "#" } ]
+
+const mockMeetingNotes: MeetingNote[] = [ { id: "1", title: "Project Kickoff Meeting", date: new Date("2024-06-03"), attendees: ["Sarah Johnson", "Mike Chen", "Emily Davis"], content: "Discussed project scope, timeline, and initial requirements. Agreed on MVP features and development approach.", duration: "1h 30m" }, { id: "2", title: "Sprint Planning - Week 6", date: new Date("2024-07-15"), attendees: ["Sarah Johnson", "Mike Chen", "Emily Davis", "AI Assistant"], content: "Reviewed progress on authentication system. Discussed AI integration challenges and potential solutions. Planned next sprint tasks.", aiSummary: "Key decisions: Prioritize AI response accuracy over speed. Implement user feedback loop. Next sprint focus: core AI engine development.", duration: "45m" }, { id: "3", title: "Design Review Session", date: new Date("2024-07-22"), attendees: ["Sarah Johnson", "Emily Davis"], content: "Reviewed latest UI mockups and user flow. Discussed accessibility requirements and mobile responsiveness.", duration: "1h 15m" } ]
+
+export default function ProjectDetailPage() { const [showTaskModal, setShowTaskModal] = useState(false) const [isGenerating, setIsGenerating] = useState<string | null>(null)
+
+const statusColor = (status: string) => { switch (status) { case "completed": return "bg-green-500/20 text-green-400 border-green-500/30" case "in-progress": return "bg-blue-500/20 text-blue-400 border-blue-500/30" case "todo": return "bg-gray-500/20 text-gray-400 border-gray-500/30" case "pending": return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" default: return "bg-gray-500/20 text-gray-400 border-gray-500/30" } } const priorityColor = (priority: string) => { switch (priority) { case "high": return "bg-red-500/20 text-red-400 border-red-500/30" case "medium": return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" case "low": return "bg-green-500/20 text-green-400 border-green-500/30" default: return "bg-gray-500/20 text-gray-400 border-gray-500/30" } }
+
+const triggerAISummary = (id: string) => { setIsGenerating(id) setTimeout(() => setIsGenerating(null), 2500) }
+
+return ( <div className="min-h-screen bg-gray-950 text-white p-6"> <div className="max-w-7xl mx-auto space-y-6"> <div className="flex items-center gap-4"> <Button variant="ghost" size="sm" asChild> <a href="/projects"> <ArrowLeft className="h-4 w-4 mr-2" />Back to Projects </a> </Button> </div>
+
+    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div>
+        <h1 className="text-3xl font-bold">{mockProject.name}</h1>
+        <p className="text-gray-400 mt-2 max-w-2xl">{mockProject.description}</p>
+      </div>
+      <div className="flex items-center gap-3">
+        <Badge className={statusColor(mockProject.status)}>{mockProject.status}</Badge>
+        <Button onClick={() => setShowTaskModal(true)}>
+          <Plus className="h-4 w-4 mr-2" />Delegate Task
+        </Button>
+      </div>
+    </div>
+
+    {/* Stats */}
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <Card className="bg-gray-900 border-gray-700">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-3"><Target className="h-8 w-8 text-blue-500" />
+            <div><p className="text-sm text-gray-400">Progress</p><p className="text-2xl font-bold">{mockProject.progress}%</p></div>
+          </div>
+          <Progress value={mockProject.progress} className="mt-3" />
+        </CardContent>
+      </Card>
+      <Card className="bg-gray-900 border-gray-700"><CardContent className="p-6"><div className="flex items-center gap-3"><Calendar className="h-8 w-8 text-green-500" /><div><p className="text-sm text-gray-400">Due</p><p className="text-lg font-semibold">{format(mockProject.dueDate, "MMM dd, yyyy")}</p></div></div></CardContent></Card>
+      <Card className="bg-gray-900 border-gray-700"><CardContent className="p-6"><div className="flex items-center gap-3"><Users className="h-8 w-8 text-purple-500" /><div><p className="text-sm text-gray-400">Team</p><p className="text-2xl font-bold">{mockProject.team.length}</p></div></div></CardContent></Card>
+      <Card className="bg-gray-900 border-gray-700"><CardContent className="p-6"><div className="flex items-center gap-3"><TrendingUp className="h-8 w-8 text-orange-500" /><div><p className="text-sm text-gray-400">Budget Used</p><p className="text-lg font-semibold">${(mockProject.spent/1000).toFixed(0)}k / ${(mockProject.budget/1000).toFixed(0)}k</p></div></div></CardContent></Card>
+    </div>
+
+    <Tabs defaultValue="overview" className="space-y-6">
+      <TabsList className="bg-gray-900 border-gray-700"><TabsTrigger value="overview">Overview</TabsTrigger><TabsTrigger value="tasks">Tasks</TabsTrigger><TabsTrigger value="documents">Documents</TabsTrigger><TabsTrigger value="meetings">Meeting Notes</TabsTrigger></TabsList>
+
+      <TabsContent value="overview" className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Team */}
+          <Card className="bg-gray-900 border-gray-700"><CardHeader><CardTitle className="flex items-center gap-2"><Users className="h-5 w-5" />Team</CardTitle></CardHeader><CardContent className="space-y-4">{mockProject.team.map(m=> (<div key={m.id} className="flex items-center gap-3"><Avatar><AvatarImage src={m.avatar} /><AvatarFallback>{m.type==='ai'? <Bot className="h-4 w-4"/>:m.name.split(' ').map(n=>n[0]).join('')}</AvatarFallback></Avatar><div><p className="font-medium flex items-center gap-1">{m.name}{m.type==='ai' && <Bot className="h-4 w-4 text-blue-500"/>}</p><p className="text-sm text-gray-400">{m.role}</p></div></div>))}</CardContent></Card>
+          {/* Milestones */}
+          <Card className="bg-gray-900 border-gray-700"><CardHeader><CardTitle className="flex items-center gap-2"><Target className="h-5 w-5"/>Milestones</CardTitle></CardHeader><CardContent className="space-y-4">{mockProject.milestones.map(ms=>(<div key={ms.id} className="flex items-center gap-3"><div>{ms.status==='completed'?<CheckCircle className="h-5 w-5 text-green-500"/>:ms.status==='in-progress'?<Clock className="h-5 w-5 text-blue-500"/>:<AlertCircle className="h-5 w-5 text-gray-500"/>}</div><div className="flex-1"><p className="font-medium">{ms.title}</p><p className="text-sm text-gray-400">Due: {format(ms.dueDate,'MMM dd, yyyy')}</p></div><Badge className={statusColor(ms.status)}>{ms.status}</Badge></div>))}</CardContent></Card>
+        </div>
+      </TabsContent>
+
+      {/* Tasks */}
+      <TabsContent value="tasks" className="space-y-6">
+        <div className="flex justify-between items-center"><h3 className="text-xl font-semibold">Tasks</h3><Button onClick={()=>setShowTaskModal(true)}><Plus className="h-4 w-4 mr-2"/>Add Task</Button></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">{mockTasks.map(t=>(<Card key={t.id} className="bg-gray-900 border-gray-700"><CardHeader className="pb-3"><div className="flex justify-between"><CardTitle className="text-lg line-clamp-2">{t.title}</CardTitle><div className="flex gap-1"><Badge className={statusColor(t.status)}>{t.status}</Badge><Badge className={priorityColor(t.priority)}>{t.priority}</Badge></div></div></CardHeader><CardContent className="space-y-4"><p className="text-gray-400 text-sm line-clamp-2">{t.description}</p><div className="text-sm text-gray-400 flex items-center gap-2"><Calendar className="h-4 w-4"/>Due: {format(t.dueDate,'MMM dd, yyyy')}</div></CardContent></Card>))}</div>
+      </TabsContent>
+
+      {/* Documents */}
+      <TabsContent value="documents" className="space-y-6"><div className="flex justify-between items-center"><h3 className="text-xl font-semibold">Documents</h3><Button><Plus className="h-4 w-4 mr-2"/>Upload</Button></div><div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">{mockDocuments.map(d=>(<Card key={d.id} className="bg-gray-900 border-gray-700"><CardContent className="p-6"><div className="flex items-start gap-3"><FileText className="h-8 w-8 text-blue-500"/><div className="flex-1"><h4 className="font-medium truncate">{d.name}</h4><p className="text-sm text-gray-400">{d.type} • {d.size}</p><p className="text-xs text-gray-500">Uploaded {format(d.uploadedAt,'MMM dd, yyyy')}</p></div></div><div className="flex gap-2 mt-4"><Button size="sm" variant="outline" className="flex-1"><Download className="h-4 w-4 mr-1"/>Download</Button><Button size="sm" variant="ghost"><Share className="h-4 w-4"/></Button></div></CardContent></Card>))}</div></TabsContent>
+
+      {/* Meeting notes */}
+      <TabsContent value="meetings" className="space-y-6"><h3 className="text-xl font-semibold">Meeting Notes</h3><div className="space-y-6">{mockMeetingNotes.map(n=>(<Card key={n.id} className="bg-gray-900 border-gray-700"><CardHeader><CardTitle>{n.title}</CardTitle><p className="text-sm text-gray-400">{format(n.date,'MMM dd, yyyy')} • {n.duration}</p></CardHeader><CardContent className="space-y-4"><p className="text-gray-300 text-sm">{n.content}</p>{n.aiSummary?<div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4"><h5 className="font-medium mb-2 flex items-center gap-2"><Sparkles className="h-4 w-4 text-blue-500"/>AI Summary</h5><p className="text-blue-100 text-sm">{n.aiSummary}</p></div>:<Button size="sm" variant="outline" disabled={isGenerating===n.id} onClick={()=>triggerAISummary(n.id)} className="flex items-center gap-2"><Sparkles className="h-4 w-4"/>{isGenerating===n.id?'Generating...':'Generate AI Summary'}</Button>}</CardContent></Card>))}</div></TabsContent>
+    </Tabs>
+    <TaskDelegationModal open={showTaskModal} onOpenChange={setShowTaskModal}/>
+  </div>
+</div>
+
+) } EOF
+
+/home/code/mybizai$ cat > app/community/page.tsx << 'EOF' "use client"
+
+import { useState } from "react" import { Button } from "@/components/ui/button" import { Input } from "@/components/ui/input" import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card" import { Badge } from "@/components/ui/badge" import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs" import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar" import { Textarea } from "@/components/ui/textarea" import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select" import { MessageSquare, Search, Plus, Heart, MessageCircle, Eye, Pin, TrendingUp, Users, Calendar, Filter, Send, Bot, Star, ThumbsUp, Reply, MoreHorizontal } from "lucide-react" import { format } from "date-fns"
+
+interface ForumPost { id: string title: string content: string author: string authorAvatar: string authorType: "human" | "ai" category: string tags: string[] createdAt: Date updatedAt: Date views: number likes: number replies: number isPinned: boolean isLiked: boolean status: "open" | "solved" | "closed" }
+
+interface Reply { id: string content: string author: string authorAvatar: string authorType: "human" | "ai" createdAt: Date likes: number isLiked: boolean isSolution?: boolean }
+
+const mockPosts: ForumPost[] = [ { id: "1", title: "Best practices for AI-powered market research?", content: "I'm looking for advice on how to effectively use AI tools for market research. What are your go-to strategies and tools?", author: "Sarah Johnson", authorAvatar: "/avatars/sarah.jpg", authorType: "human", category: "Market Research", tags: ["ai", "research", "strategy"], createdAt: new Date("2024-07-10T10:30:00"), updatedAt: new Date("2024-07-10T14:20:00"), views: 234, likes: 18, replies: 12, isPinned: true, isLiked: false, status: "open" }, { id: "2", title: "How to validate a SaaS idea quickly?", content: "I have a SaaS idea but want to validate it before investing too much time. What's the fastest way to test market demand?", author: "Mike Chen", authorAvatar: "/avatars/mike.jpg", authorType: "human", category: "Startup Advice", tags: ["saas", "validation", "mvp"], createdAt: new Date("2024-07-09T16:45:00"), updatedAt: new Date("2024-07-10T09:15:00"), views: 189, likes: 24, replies: 8, isPinned: false, isLiked: true, status: "solved" }, { id: "3", title: "AI-Generated Business Plan Templates", content: "I've created a comprehensive collection of AI-generated business plan templates. Here are the key sections you should include...", author: "Business AI Assistant", authorAvatar: "/avatars/ai.jpg", authorType: "ai", category: "Resources", tags: ["templates", "business-plan", "ai-generated"], createdAt: new Date("2024-07-08T11:20:00"), updatedAt: new Date("2024-07-08T11:20:00"), views: 456, likes: 67, replies: 23, isPinned: false, isLiked: false, status: "open" }, { id: "4", title: "Funding strategies for tech startups in 2024", content: "The funding landscape has changed significantly. What are the most effective strategies for raising capital in the current market?", author: "Emily Davis", authorAvatar: "/avatars/emily.jpg", authorType: "human", category: "Funding", tags: ["funding", "investment", "startup"], createdAt: new Date("2024-07-07T14:30:00"), updatedAt: new Date("2024-07-09T10:45:00"), views: 312, likes: 31, replies: 15, isPinned: false, isLiked: false, status: "open" } ]
+
+const categories = [ { name: "All Categories", count: 156 }, { name: "Market Research", count: 34 }, { name: "Startup Advice", count: 45 }, { name: "Resources", count: 28 }, { name: "Funding", count: 23 }, { name: "Technology", count: 26 } ]
+
+const trendingTopics = [ { name: "AI Tools", posts: 45 }, { name: "Market Validation", posts: 32 }, { name: "SaaS Growth", posts: 28 }, { name: "Funding Rounds", posts: 24 }, { name: "Product Launch", posts: 19 } ]
+
+export default function CommunityPage() { const [posts, setPosts] = useState(mockPosts) const [selectedCategory, setSelectedCategory] = useState("All Categories") const [searchQuery, setSearchQuery] = useState("") const [sortBy, setSortBy] = useState("recent") const [showNewPostForm, setShowNewPostForm] = useState(false) const [newPost, setNewPost] = useState({ title: "", content: "", category: "", tags: "" })
+
+const filteredPosts = posts .filter(post => { const matchesCategory = selectedCategory === "All Categories" || post.category === selectedCategory const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) || post.content.toLowerCase().includes(searchQuery.toLowerCase()) || post.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())) return matchesCategory && matchesSearch }) .sort((a, b) => { switch (sortBy) { case "recent": return b.updatedAt.getTime() - a.updatedAt.getTime() case "popular": return b.likes - a.likes case "replies": return b.replies - a.replies default: return 0 } })
+
+const toggleLike = (postId: string) => { setPosts(prev => prev.map(post => post.id === postId ? { ...post, isLiked: !post.isLiked, likes: post.isLiked ? post.likes - 1 : post.likes + 1 } : post )) }
+
+const getStatusColor = (status: string) => { switch (status) { case "solved": return "bg-green-500/20 text-green-400 border-green-500/30" case "closed": return "bg-red-500/20 text-red-400 border-red-500/30" default: return "bg-blue-500/20 text-blue-400 border-blue-500/30" } }
+
+const handleCreatePost = () => { if (newPost.title && newPost.content) { const post: ForumPost = { id: Date.now().toString(), title: newPost.title, content: newPost.content, author: "Current User", authorAvatar: "/avatars/user.jpg", authorType: "human", category: newPost.category || "General", tags: newPost.tags.split(",").map(tag => tag.trim()).filter(Boolean), createdAt: new Date(), updatedAt: new Date(), views: 0, likes: 0, replies: 0, isPinned: false, isLiked: false, status: "open" } setPosts(prev => [post, ...prev]) setNewPost({ title: "", content: "", category: "", tags: "" }) setShowNewPostForm(false) } }
+
+return ( <div className="min-h-screen bg-gray-950 text-white p-6"> <div className="max-w-7xl mx-auto space-y-6"> {/* Header */} <div className="flex items-center justify-between"> <div> <h1 className="text-3xl font-bold flex items-center gap-3"> <MessageSquare className="h-8 w-8 text-blue-500" /> Community Forum </h1> <p className="text-gray-400 mt-2"> Connect, share knowledge, and grow together with fellow entrepreneurs </p> </div> <Button onClick={() => setShowNewPostForm(true)}> <Plus className="h-4 w-4 mr-2" /> New Discussion </Button> </div>
+
+    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      {/* Sidebar */}
+      <div className="lg:col-span-1 space-y-6">
+        {/* Categories */}
+        <Card className="bg-gray-900 border-gray-700">
+          <CardHeader>
+            <CardTitle className="text-lg">Categories</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {categories.map((category) => (
+              <button
+                key={category.name}
+                onClick={() => setSelectedCategory(category.name)}
+                className={`w-full text-left p-2 rounded-lg transition-colors ${
+                  selectedCategory === category.name
+                    ? "bg-blue-500/20 text-blue-400"
+                    : "hover:bg-gray-800"
+                }`}
+              >
+                <div className="flex justify-between items-center">
+                  <span className="text-sm">{category.name}</span>
+                  <Badge variant="outline" className="text-xs">
+                    {category.count}
+                  </Badge>
+                </div>
+              </button>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Trending Topics */}
+        <Card className="bg-gray-900 border-gray-700">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              Trending Topics
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {trendingTopics.map((topic, index) => (
+              <div key={topic.name} className="flex items-center gap-3">
+                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center text-xs text-blue-400">
+                  {index + 1}
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">{topic.name}</p>
+                  <p className="text-xs text-gray-400">{topic.posts} posts</p>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Community Stats */}
+        <Card className="bg-gray-900 border-gray-700">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Users className="h-5 w-5" />
+              Community Stats
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-400">Total Members</span>
+              <span className="text-sm font-medium">2,847</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-400">Active Today</span>
+              <span className="text-sm font-medium">156</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-400">Total Posts</span>
+              <span className="text-sm font-medium">8,923</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-400">Solved Questions</span>
+              <span className="text-sm font-medium">3,421</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Main Content */}
+      <div className="lg:col-span-3 space-y-6">
+        {/* Search and Filters */}
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Search discussions..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 bg-gray-900 border-gray-700"
+            />
+          </div>
+          
+          <Select value={sortBy} onValueChange={setSortBy}>
+            <SelectTrigger className="w-48 bg-gray-900 border-gray-700">
+              <Filter className="h-4 w-4 mr-2" />
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="recent">Most Recent</SelectItem>
+              <SelectItem value="popular">Most Popular</SelectItem>
+              <SelectItem value="replies">Most Replies</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* New Post Form */}
+        {showNewPostForm && (
+          <Card className="bg-gray-900 border-gray-700">
+            <CardHeader>
+              <CardTitle>Start a New Discussion</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Input
+                placeholder="Discussion title..."
+                value={newPost.title}
+                onChange={(e) => setNewPost(prev => ({ ...prev, title: e.target.value }))}
+                className="bg-gray-800 border-gray-600"
+              />
+              
+              <Select value={newPost.category} onValueChange={(value) => setNewPost(prev => ({ ...prev, category: value }))}>
+                <SelectTrigger className="bg-gray-800 border-gray-600">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.slice(1).map(cat => (
+                    <SelectItem key={cat.name} value={cat.name}>{cat.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Textarea
+                placeholder="Share your thoughts, ask questions, or start a discussion..."
+                value={newPost.content}
+                onChange={(e) => setNewPost(prev => ({ ...prev, content: e.target.value }))}
+                className="bg-gray-800 border-gray-600 min-h-32"
+              />
+
+              <Input
+                placeholder="Tags (comma separated)"
+                value={newPost.tags}
+                onChange={(e) => setNewPost(prev => ({ ...prev, tags: e.target.value }))}
+                className="bg-gray-800 border-gray-600"
+              />
+
+              <div className="flex gap-2">
+                <Button onClick={handleCreatePost}>
+                  <Send className="h-4 w-4 mr-2" />
+                  Post Discussion
+                </Button>
+                <Button variant="outline" onClick={() => setShowNewPostForm(false)}>
+                  Cancel
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Posts List */}
+        <div className="space-y-4">
+          {filteredPosts.map((post) => (
+            <Card key={post.id} className="bg-gray-900 border-gray-700 hover:border-gray-600 transition-colors">
+              <CardContent className="p-6">
+                <div className="flex gap-4">
+                  <Avatar className="flex-shrink-0">
+                    <AvatarImage src={post.authorAvatar} />
+                    <AvatarFallback>
+                      {post.authorType === "ai" ? <Bot className="h-4 w-4" /> : post.author.split(' ').map(n => n[0]).join('')}
+                    </AvatarFallback>
+                  </Avatar>
+
+                  <div className="flex-1 space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          {post.isPinned && <Pin className="h-4 w-4 text-yellow-500" />}
+                          <h3 className="font-semibold text-lg hover:text-blue-400 cursor-pointer">
+                            {post.title}
+                          </h3>
+                          <Badge className={getStatusColor(post.status)}>
+                            {post.status}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-gray-400">
+                          <span className="flex items-center gap-1">
+                            {post.authorType === "ai" && <Bot className="h-3 w-3 text-blue-500" />}
+                            {post.author}
+                          </span>
+                          <span>•</span>
+                          <span>{format(post.createdAt, "MMM dd, yyyy")}</span>
+                          <span>•</span>
+                          <Badge variant="outline" className="text-xs">
+                            {post.category}
+                          </Badge>
+                        </div>
+                      </div>
+                      <Button variant="ghost" size="sm">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </div>
+
+                    <p className="text-gray-300 line-clamp-2">{post.content}</p>
+
+                    <div className="flex flex-wrap gap-2">
+                      {post.tags.map(tag => (
+                        <Badge key={tag} variant="outline" className="text-xs">
+                          #{tag}
+                        </Badge>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2">
+                      <div className="flex items-center gap-6 text-sm text-gray-400">
+                        <div className="flex items-center gap-1">
+                          <Eye className="h-4 w-4" />
+                          {post.views}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <MessageCircle className="h-4 w-4" />
+                          {post.replies}
+                        </div>
+                        <button
+                          onClick={() => toggleLike(post.id)}
+                          className={`flex items-center gap-1 hover:text-red-400 transition-colors ${
+                            post.isLiked ? "text-red-400" : ""
+                          }`}
+                        >
+                          <Heart className={`h-4 w-4 ${post.isLiked ? "fill-current" : ""}`} />
+                          {post.likes}
+                        </button>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline">
+                          <Reply className="h-4 w-4 mr-1" />
+                          Reply
+                        </Button>
+                        <Button size="sm" variant="ghost">
+                          <Star className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {filteredPosts.length === 0 && (
+          <div className="text-center py-12">
+            <MessageSquare className="h-16 w-16 text-gray-600 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-400 mb-2">No discussions found</h3>
+            <p className="text-gray-500">
+              {searchQuery || selectedCategory !== "All Categories" 
+                ? "Try adjusting your search or filters."
+                : "Be the first to start a discussion!"
+              }
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</div>
+
+) } EOF
+
+/home/code$ find /home/code -name "mybizai" -type d /home/code/mybizai
+
+/home/code$ tree /home/code/mybizai -I node_modules /home/code/mybizai ├── app │ ├── analytics │ │ └── page.tsx │ ├── community │ │ └── page.tsx │ ├── favicon.ico │ ├── globals.css │ ├── ideas │ │ └── page.tsx │ ├── layout.tsx │ ├── page.tsx │ ├── projects │ │ ├── archived │ │ │ └── page.tsx │ │ ├── [id] │ │ │ └── page.tsx │ │ └── page.tsx │ ├── resources │ │ └── page.tsx │ ├── subscription │ │ └── page.tsx │ └── team │ └── page.tsx ├── bun.lock ├── components │ ├── charts │ │ ├── kpi-cards.tsx │ │ └── revenue-chart.tsx │ ├── dashboard │ │ ├── active-ideas.tsx │ │ ├── ideas-in-review.tsx │ │ ├── recent-activity.tsx │ │ └── team-performance.tsx │ ├── layout │ │ └── navigation.tsx │ ├── modals │ │ └── task-delegation-modal.tsx │ ├── project-detail │ └── ui │ ├── accordion.tsx │ ├── alert-dialog.tsx │ ├── alert.tsx │ ├── aspect-ratio.tsx │ ├── avatar.tsx │ ├── badge.tsx │ ├── breadcrumb.tsx │ ├── button.tsx │ ├── calendar.tsx │ ├── card.tsx │ ├── carousel.tsx │ ├── chart.tsx │ ├── checkbox.tsx │ ├── collapsible.tsx │ ├── command.tsx │ ├── context-menu.tsx │ ├── dialog.tsx │ ├── drawer.tsx │ ├── dropdown-menu.tsx │ ├── form.tsx │ ├── hover-card.tsx │ ├── input-otp.tsx │ ├── input.tsx │ ├── label.tsx │ ├── menubar.tsx │ ├── navigation-menu.tsx │ ├── pagination.tsx │ ├── popover.tsx │ ├── progress.tsx │ ├── radio-group.tsx │ ├── resizable.tsx │ ├── scroll-area.tsx │ ├── select.tsx │ ├── separator.tsx │ ├── sheet.tsx │ ├── sidebar.tsx │ ├── skeleton.tsx │ ├── slider.tsx │ ├── sonner.tsx │ ├── switch.tsx │ ├── table.tsx │ ├── tabs.tsx │ ├── textarea.tsx │ ├── toggle-group.tsx │ ├── toggle.tsx │ └── tooltip.tsx ├── components.json ├── eslint.config.mjs ├── hooks │ └── use-mobile.ts ├── lib │ ├── data │ │ └── mock-data.ts │ └── utils.ts ├── next.config.ts ├── next-env.d.ts ├── package.json ├── postcss.config.mjs ├── public │ ├── file.svg │ ├── globe.svg │ ├── next.svg │ ├── vercel.svg │ └── window.svg ├── README.md ├── server.log └── tsconfig.json
+
+21 directories, 85 files
+
+/home/code/mybizai$ mkdir -p /home/code/mybizai/app/{business-plan,competitive-analysis,financial-projections,marketing-campaigns,market-research,brand-builder,legal-compliance,academy,billing,help,contact,privacy,templates,reports,security,onboarding}
+
+/home/code/mybizai$ cat > /home/code/mybizai/app/business-plan/page.tsx << 'EOF' 'use client'
+
+import { useState } from 'react' import { Button } from '@/components/ui/button' import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card' import { Textarea } from '@/components/ui/textarea' import { Input } from '@/components/ui/input' import { Badge } from '@/components/ui/badge' import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs' import { Progress } from '@/components/ui/progress' import { FileText, Download, Share2, Save, Sparkles, Users, Target, DollarSign, TrendingUp, Calendar, CheckCircle } from 'lucide-react'
+
+export default function BusinessPlanEditor() { const [planData, setPlanData] = useState({ title: 'AI-Powered E-commerce Platform', executiveSummary: 'Revolutionary platform that uses AI to personalize shopping experiences and optimize inventory management for online retailers.', marketAnalysis: '', competitiveAnalysis: '', marketingStrategy: '', financialProjections: '', operationalPlan: '' })
+
+const [completionPercentage, setCompletionPercentage] = useState(65)
+
+const sections = [ { id: 'executive', title: 'Executive Summary', icon: FileText, completed: true }, { id: 'market', title: 'Market Analysis', icon: TrendingUp, completed: true }, { id: 'competitive', title: 'Competitive Analysis', icon: Target, completed: false }, { id: 'marketing', title: 'Marketing Strategy', icon: Users, completed: true }, { id: 'financial', title: 'Financial Projections', icon: DollarSign, completed: false }, { id: 'operational', title: 'Operational Plan', icon: Calendar, completed: false } ]
+
+return ( <div className="min-h-screen bg-gray-950 text-white"> <div className="container mx-auto px-6 py-8"> {/* Header */} <div className="flex items-center justify-between mb-8"> <div> <h1 className="text-3xl font-bold mb-2">Business Plan Editor</h1> <p className="text-gray-400">Create comprehensive business plans with AI assistance</p> </div> <div className="flex items-center gap-4"> <Badge variant="secondary" className="bg-blue-600/20 text-blue-400"> {completionPercentage}% Complete </Badge> <Button variant="outline" size="sm"> <Share2 className="w-4 h-4 mr-2" /> Share </Button> <Button variant="outline" size="sm"> <Download className="w-4 h-4 mr-2" /> Export PDF </Button> <Button size="sm"> <Save className="w-4 h-4 mr-2" /> Save </Button> </div> </div>
+
+    <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      {/* Sidebar - Section Navigation */}
+      <div className="lg:col-span-1">
+        <Card className="bg-gray-900 border-gray-800">
+          <CardHeader>
+            <CardTitle className="text-lg">Plan Sections</CardTitle>
+            <Progress value={completionPercentage} className="w-full" />
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {sections.map((section) => (
+              <div
+                key={section.id}
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 cursor-pointer transition-colors"
+              >
+                <section.icon className="w-4 h-4 text-blue-400" />
+                <span className="text-sm flex-1">{section.title}</span>
+                {section.completed && (
+                  <CheckCircle className="w-4 h-4 text-green-400" />
+                )}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* AI Assistant */}
+        <Card className="bg-gray-900 border-gray-800 mt-6">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-blue-400" />
+              AI Assistant
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-gray-400 mb-4">
+              Get AI-powered suggestions and content generation for your business plan.
+            </p>
+            <Button size="sm" className="w-full">
+              <Sparkles className="w-4 h-4 mr-2" />
+              Generate Content
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Main Content Area */}
+      <div className="lg:col-span-3">
+        <Card className="bg-gray-900 border-gray-800">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <Input
+                  value={planData.title}
+                  onChange={(e) => setPlanData({...planData, title: e.target.value})}
+                  className="text-2xl font-bold bg-transparent border-none p-0 h-auto"
+                  placeholder="Business Plan Title"
+                />
+                <p className="text-gray-400 mt-2">Last updated: 2 hours ago</p>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="executive" className="w-full">
+              <TabsList className="grid w-full grid-cols-6 bg-gray-800">
+                <TabsTrigger value="executive">Executive</TabsTrigger>
+                <TabsTrigger value="market">Market</TabsTrigger>
+                <TabsTrigger value="competitive">Competitive</TabsTrigger>
+                <TabsTrigger value="marketing">Marketing</TabsTrigger>
+                <TabsTrigger value="financial">Financial</TabsTrigger>
+                <TabsTrigger value="operational">Operations</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="executive" className="mt-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-semibold">Executive Summary</h3>
+                    <Button variant="outline" size="sm">
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      AI Enhance
+                    </Button>
+                  </div>
+                  <Textarea
+                    value={planData.executiveSummary}
+                    onChange={(e) => setPlanData({...planData, executiveSummary: e.target.value})}
+                    placeholder="Provide a compelling overview of your business concept, target market, competitive advantages, and financial projections..."
+                    className="min-h-[300px] bg-gray-800 border-gray-700"
+                  />
+                  <div className="flex items-center gap-2 text-sm text-gray-400">
+                    <CheckCircle className="w-4 h-4 text-green-400" />
+                    Section completed • 247 words
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="market" className="mt-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-semibold">Market Analysis</h3>
+                    <Button variant="outline" size="sm">
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Generate Analysis
+                    </Button>
+                  </div>
+                  <Textarea
+                    value={planData.marketAnalysis}
+                    onChange={(e) => setPlanData({...planData, marketAnalysis: e.target.value})}
+                    placeholder="Analyze your target market, market size, growth trends, customer segments, and market opportunities..."
+                    className="min-h-[300px] bg-gray-800 border-gray-700"
+                  />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="competitive" className="mt-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-semibold">Competitive Analysis</h3>
+                    <Button variant="outline" size="sm">
+                      <Target className="w-4 h-4 mr-2" />
+                      Analyze Competitors
+                    </Button>
+                  </div>
+                  <Textarea
+                    value={planData.competitiveAnalysis}
+                    onChange={(e) => setPlanData({...planData, competitiveAnalysis: e.target.value})}
+                    placeholder="Identify key competitors, analyze their strengths and weaknesses, and define your competitive advantages..."
+                    className="min-h-[300px] bg-gray-800 border-gray-700"
+                  />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="marketing" className="mt-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-semibold">Marketing Strategy</h3>
+                    <Button variant="outline" size="sm">
+                      <Users className="w-4 h-4 mr-2" />
+                      Create Strategy
+                    </Button>
+                  </div>
+                  <Textarea
+                    value={planData.marketingStrategy}
+                    onChange={(e) => setPlanData({...planData, marketingStrategy: e.target.value})}
+                    placeholder="Outline your marketing mix, customer acquisition strategy, pricing strategy, and promotional tactics..."
+                    className="min-h-[300px] bg-gray-800 border-gray-700"
+                  />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="financial" className="mt-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-semibold">Financial Projections</h3>
+                    <Button variant="outline" size="sm">
+                      <DollarSign className="w-4 h-4 mr-2" />
+                      Generate Projections
+                    </Button>
+                  </div>
+                  <Textarea
+                    value={planData.financialProjections}
+                    onChange={(e) => setPlanData({...planData, financialProjections: e.target.value})}
+                    placeholder="Include revenue projections, expense forecasts, cash flow analysis, and funding requirements..."
+                    className="min-h-[300px] bg-gray-800 border-gray-700"
+                  />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="operational" className="mt-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-semibold">Operational Plan</h3>
+                    <Button variant="outline" size="sm">
+                      <Calendar className="w-4 h-4 mr-2" />
+                      Plan Operations
+                    </Button>
+                  </div>
+                  <Textarea
+                    value={planData.operationalPlan}
+                    onChange={(e) => setPlanData({...planData, operationalPlan: e.target.value})}
+                    placeholder="Describe your operational processes, organizational structure, key personnel, and implementation timeline..."
+                    className="min-h-[300px] bg-gray-800 border-gray-700"
+                  />
+                </div>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  </div>
+</div>
+
+) } EOF
+
+/home/code/mybizai$ cat > /home/code/mybizai/app/competitive-analysis/page.tsx << 'EOF' 'use client'
+
+import { useState } from 'react' import { Button } from '@/components/ui/button' import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card' import { Input } from '@/components/ui/input' import { Badge } from '@/components/ui/badge' import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs' import { Progress } from '@/components/ui/progress' import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar' import { Target, Search, TrendingUp, DollarSign, Users, Star, AlertTriangle, CheckCircle, BarChart3, Globe, Zap } from 'lucide-react'
+
+export default function CompetitiveAnalysis() { const [searchQuery, setSearchQuery] = useState('')
+
+const competitors = [ { id: 1, name: 'TechFlow Solutions', logo: '/api/placeholder/40/40', website: 'techflow.com', marketShare: 23, revenue: '$45M', employees: '500-1000', founded: 2018, strengths: ['Strong brand recognition', 'Extensive feature set', 'Large customer base'], weaknesses: ['High pricing', 'Complex onboarding', 'Limited customization'], threatLevel: 'high', rating: 4.2, funding: '$120M Series C' }, { id: 2, name: 'InnovateCorp', logo: '/api/placeholder/40/40', website: 'innovatecorp.io', marketShare: 18, revenue: '$32M', employees: '200-500', founded: 2019, strengths: ['Innovative features', 'Competitive pricing', 'Fast growth'], weaknesses: ['Limited market presence', 'Newer brand', 'Smaller team'], threatLevel: 'medium', rating: 4.0, funding: '$75M Series B' }, { id: 3, name: 'DataDrive Inc', logo: '/api/placeholder/40/40', website: 'datadrive.com', marketShare: 15, revenue: '$28M', employees: '100-200', founded: 2020, strengths: ['AI-powered analytics', 'User-friendly interface', 'Strong support'], weaknesses: ['Limited integrations', 'Smaller feature set', 'Regional focus'], threatLevel: 'low', rating: 4.5, funding: '$40M Series A' } ]
+
+const marketInsights = [ { metric: 'Total Market Size', value: '$2.4B', change: '+12%', trend: 'up' }, { metric: 'Growth Rate', value: '15.3%', change: '+2.1%', trend: 'up' }, { metric: 'Key Players', value: '47', change: '+8', trend: 'up' }, { metric: 'Market Maturity', value: 'Growing', change: 'Stable', trend: 'neutral' } ]
+
+const getThreatColor = (level: string) => { switch (level) { case 'high': return 'bg-red-600/20 text-red-400 border-red-600/30' case 'medium': return 'bg-yellow-600/20 text-yellow-400 border-yellow-600/30' case 'low': return 'bg-green-600/20 text-green-400 border-green-600/30' default: return 'bg-gray-600/20 text-gray-400 border-gray-600/30' } }
+
+return ( <div className="min-h-screen bg-gray-950 text-white"> <div className="container mx-auto px-6 py-8"> {/* Header */} <div className="flex items-center justify-between mb-8"> <div> <h1 className="text-3xl font-bold mb-2">Competitive Analysis</h1> <p className="text-gray-400">Analyze competitors and market positioning</p> </div> <div className="flex items-center gap-4"> <Button variant="outline" size="sm"> <BarChart3 className="w-4 h-4 mr-2" /> Generate Report </Button> <Button size="sm"> <Target className="w-4 h-4 mr-2" /> Add Competitor </Button> </div> </div>
+
+    {/* Market Overview */}
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      {marketInsights.map((insight, index) => (
+        <Card key={index} className="bg-gray-900 border-gray-800">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400">{insight.metric}</p>
+                <p className="text-2xl font-bold">{insight.value}</p>
+              </div>
+              <div className={`flex items-center gap-1 text-sm ${
+                insight.trend === 'up' ? 'text-green-400' : 
+                insight.trend === 'down' ? 'text-red-400' : 'text-gray-400'
+              }`}>
+                <TrendingUp className="w-4 h-4" />
+                {insight.change}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+
+    {/* Search and Filters */}
+    <Card className="bg-gray-900 border-gray-800 mb-8">
+      <CardContent className="p-6">
+        <div className="flex items-center gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              placeholder="Search competitors..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 bg-gray-800 border-gray-700"
+            />
+          </div>
+          <Button variant="outline">Filter</Button>
+          <Button variant="outline">Sort</Button>
+        </div>
+      </CardContent>
+    </Card>
+
+    {/* Competitors Grid */}
+    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+      {competitors.map((competitor) => (
+        <Card key={competitor.id} className="bg-gray-900 border-gray-800">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Avatar>
+                  <AvatarImage src={competitor.logo} />
+                  <AvatarFallback>{competitor.name.slice(0, 2)}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <CardTitle className="text-lg">{competitor.name}</CardTitle>
+                  <CardDescription className="flex items-center gap-2">
+                    <Globe className="w-3 h-3" />
+                    {competitor.website}
+                  </CardDescription>
+                </div>
+              </div>
+              <Badge className={getThreatColor(competitor.threatLevel)}>
+                {competitor.threatLevel} threat
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {/* Key Metrics */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-400">Market Share</p>
+                  <p className="font-semibold">{competitor.marketShare}%</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Revenue</p>
+                  <p className="font-semibold">{competitor.revenue}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Employees</p>
+                  <p className="font-semibold">{competitor.employees}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Rating</p>
+                  <div className="flex items-center gap-1">
+                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                    <span className="font-semibold">{competitor.rating}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Market Share Progress */}
+              <div>
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-gray-400">Market Share</span>
+                  <span>{competitor.marketShare}%</span>
+                </div>
+                <Progress value={competitor.marketShare} className="h-2" />
+              </div>
+
+              {/* Strengths & Weaknesses */}
+              <Tabs defaultValue="strengths" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 bg-gray-800">
+                  <TabsTrigger value="strengths">Strengths</TabsTrigger>
+                  <TabsTrigger value="weaknesses">Weaknesses</TabsTrigger>
+                </TabsList>
+                <TabsContent value="strengths" className="mt-3">
+                  <div className="space-y-2">
+                    {competitor.strengths.map((strength, index) => (
+                      <div key={index} className="flex items-center gap-2 text-sm">
+                        <CheckCircle className="w-3 h-3 text-green-400" />
+                        <span>{strength}</span>
+                      </div>
+                    ))}
+                  </div>
+                </TabsContent>
+                <TabsContent value="weaknesses" className="mt-3">
+                  <div className="space-y-2">
+                    {competitor.weaknesses.map((weakness, index) => (
+                      <div key={index} className="flex items-center gap-2 text-sm">
+                        <AlertTriangle className="w-3 h-3 text-red-400" />
+                        <span>{weakness}</span>
+                      </div>
+                    ))}
+                  </div>
+                </TabsContent>
+              </Tabs>
+
+              <div className="flex items-center justify-between pt-4 border-t border-gray-800">
+                <div className="text-sm">
+                  <span className="text-gray-400">Founded:</span>
+                  <span className="ml-1">{competitor.founded}</span>
+                </div>
+                <Button variant="outline" size="sm">
+                  <Zap className="w-4 h-4 mr-2" />
+                  Analyze
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+
+    {/* Competitive Matrix */}
+    <Card className="bg-gray-900 border-gray-800">
+      <CardHeader>
+        <CardTitle>Competitive Matrix</CardTitle>
+        <CardDescription>Compare key features and capabilities</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-gray-800">
+                <th className="text-left py-3 px-4">Feature</th>
+                <th className="text-center py-3 px-4">Your Product</th>
+                <th className="text-center py-3 px-4">TechFlow</th>
+                <th className="text-center py-3 px-4">InnovateCorp</th>
+                <th className="text-center py-3 px-4">DataDrive</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { feature: 'AI Integration', us: true, comp1: true, comp2: false, comp3: true },
+                { feature: 'Mobile App', us: true, comp1: true, comp2: true, comp3: false },
+                { feature: 'API Access', us: true, comp1: true, comp2: true, comp3: true },
+                { feature: 'Custom Reports', us: true, comp1: false, comp2: true, comp3: true },
+                { feature: '24/7 Support', us: true, comp1: true, comp2: false, comp3: true }
+              ].map((row, index) => (
+                <tr key={index} className="border-b border-gray-800/50">
+                  <td className="py-3 px-4 font-medium">{row.feature}</td>
+                  <td className="text-center py-3 px-4">
+                    {row.us ? <CheckCircle className="w-5 h-5 text-green-400 mx-auto" /> : <span className="text-gray-500">—</span>}
+                  </td>
+                  <td className="text-center py-3 px-4">
+                    {row.comp1 ? <CheckCircle className="w-5 h-5 text-green-400 mx-auto" /> : <span className="text-gray-500">—</span>}
+                  </td>
+                  <td className="text-center py-3 px-4">
+                    {row.comp2 ? <CheckCircle className="w-5 h-5 text-green-400 mx-auto" /> : <span className="text-gray-500">—</span>}
+                  </td>
+                  <td className="text-center py-3 px-4">
+                    {row.comp3 ? <CheckCircle className="w-5 h-5 text-green-400 mx-auto" /> : <span className="text-gray-500">—</span>}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </CardContent>
+    </Card>
+  </div>
+</div>
+
+) } EOF
+
+/home/code/mybizai$ cat > /home/code/mybizai/app/financial-projections/page.tsx << 'EOF' 'use client'
+
+import { useState } from 'react' import { Button } from '@/components/ui/button' import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card' import { Input } from '@/components/ui/input' import { Label } from '@/components/ui/label' import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs' import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select' import { Badge } from '@/components/ui/badge' import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts' import { DollarSign, TrendingUp, Calculator, Download, Share2, AlertCircle, Target, Calendar, Percent } from 'lucide-react'
+
+export default function FinancialProjections() { const [timeframe, setTimeframe] = useState('5-year') const [scenario, setScenario] = useState('realistic')
+
+const revenueData = [ { month: 'Jan', conservative: 45000, realistic: 65000, optimistic: 85000 }, { month: 'Feb', conservative: 48000, realistic: 70000, optimistic: 92000 }, { month: 'Mar', conservative: 52000, realistic: 75000, optimistic: 98000 }, { month: 'Apr', conservative: 55000, realistic: 80000, optimistic: 105000 }, { month: 'May', conservative: 58000, realistic: 85000, optimistic: 112000 }, { month: 'Jun', conservative: 62000, realistic: 90000, optimistic: 118000 }, { month: 'Jul', conservative: 65000, realistic: 95000, optimistic: 125000 }, { month: 'Aug', conservative: 68000, realistic: 100000, optimistic: 132000 }, { month: 'Sep', conservative: 72000, realistic: 105000, optimistic: 138000 }, { month: 'Oct', conservative: 75000, realistic: 110000, optimistic: 145000 }, { month: 'Nov', conservative: 78000, realistic: 115000, optimistic: 152000 }, { month: 'Dec', conservative: 82000, realistic: 120000, optimistic: 158000 } ]
+
+const expenseBreakdown = [ { name: 'Personnel', value: 45, amount: 54000 }, { name: 'Marketing', value: 25, amount: 30000 }, { name: 'Operations', value: 15, amount: 18000 }, { name: 'Technology', value: 10, amount: 12000 }, { name: 'Other', value: 5, amount: 6000 } ]
+
+const cashFlowData = [ { month: 'Jan', inflow: 65000, outflow: 45000, net: 20000 }, { month: 'Feb', inflow: 70000, outflow: 48000, net: 22000 }, { month: 'Mar', inflow: 75000, outflow: 52000, net: 23000 }, { month: 'Apr', inflow: 80000, outflow: 55000, net: 25000 }, { month: 'May', inflow: 85000, outflow: 58000, net: 27000 }, { month: 'Jun', inflow: 90000, outflow: 62000, net: 28000 } ]
+
+const kpis = [ { label: 'Projected Revenue (Year 1)', value: '$1.2M', change: '+15%', trend: 'up' }, { label: 'Break-even Point', value: 'Month 8', change: '2 months earlier', trend: 'up' }, { label: 'Gross Margin', value: '68%', change: '+3%', trend: 'up' }, { label: 'Burn Rate', value: '$45K/mo', change: '-$5K', trend: 'up' } ]
+
+const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
+
+return ( <div className="min-h-screen bg-gray-950 text-white"> <div className="container mx-auto px-6 py-8"> {/* Header */} <div className="flex items-center justify-between mb-8"> <div> <h1 className="text-3xl font-bold mb-2">Financial Projections</h1> <p className="text-gray-400">Model and forecast your business financials</p> </div> <div className="flex items-center gap-4"> <Select value={timeframe} onValueChange={setTimeframe}> <SelectTrigger className="w-32"> <SelectValue /> </SelectTrigger> <SelectContent> <SelectItem value="1-year">1 Year</SelectItem> <SelectItem value="3-year">3 Years</SelectItem> <SelectItem value="5-year">5 Years</SelectItem> </SelectContent> </Select> <Select value={scenario} onValueChange={setScenario}> <SelectTrigger className="w-32"> <SelectValue /> </SelectTrigger> <SelectContent> <SelectItem value="conservative">Conservative</SelectItem> <SelectItem value="realistic">Realistic</SelectItem> <SelectItem value="optimistic">Optimistic</SelectItem> </SelectContent> </Select> <Button variant="outline" size="sm"> <Share2 className="w-4 h-4 mr-2" /> Share </Button> <Button variant="outline" size="sm"> <Download className="w-4 h-4 mr-2" /> Export </Button> </div> </div>
+
+    {/* KPI Cards */}
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      {kpis.map((kpi, index) => (
+        <Card key={index} className="bg-gray-900 border-gray-800">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400">{kpi.label}</p>
+                <p className="text-2xl font-bold">{kpi.value}</p>
+                <div className={`flex items-center gap-1 text-sm mt-1 ${
+                  kpi.trend === 'up' ? 'text-green-400' : 'text-red-400'
+                }`}>
+                  <TrendingUp className="w-3 h-3" />
+                  {kpi.change}
+                </div>
+              </div>
+              <div className="p-3 bg-blue-600/20 rounded-lg">
+                <DollarSign className="w-6 h-6 text-blue-400" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* Main Charts */}
+      <div className="lg:col-span-2 space-y-8">
+        {/* Revenue Projections */}
+        <Card className="bg-gray-900 border-gray-800">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-blue-400" />
+              Revenue Projections
+            </CardTitle>
+            <CardDescription>Monthly revenue forecast across scenarios</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={revenueData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis dataKey="month" stroke="#9ca3af" />
+                  <YAxis stroke="#9ca3af" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#1f2937', 
+                      border: '1px solid #374151',
+                      borderRadius: '8px'
+                    }}
+                  />
+                  <Line type="monotone" dataKey="conservative" stroke="#ef4444" strokeWidth={2} />
+                  <Line type="monotone" dataKey="realistic" stroke="#3b82f6" strokeWidth={3} />
+                  <Line type="monotone" dataKey="optimistic" stroke="#10b981" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="flex items-center justify-center gap-6 mt-4">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                <span className="text-sm">Conservative</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                <span className="text-sm">Realistic</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <span className="text-sm">Optimistic</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Cash Flow Analysis */}
+        <Card className="bg-gray-900 border-gray-800">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calculator className="w-5 h-5 text-green-400" />
+              Cash Flow Analysis
+            </CardTitle>
+            <CardDescription>Monthly cash inflows and outflows</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={cashFlowData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis dataKey="month" stroke="#9ca3af" />
+                  <YAxis stroke="#9ca3af" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#1f2937', 
+                      border: '1px solid #374151',
+                      borderRadius: '8px'
+                    }}
+                  />
+                  <Area type="monotone" dataKey="inflow" stackId="1" stroke="#10b981" fill="#10b981" fillOpacity={0.3} />
+                  <Area type="monotone" dataKey="outflow" stackId="2" stroke="#ef4444" fill="#ef4444" fillOpacity={0.3} />
+                  <Line type="monotone" dataKey="net" stroke="#3b82f6" strokeWidth={3} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Sidebar */}
+      <div className="space-y-8">
+        {/* Expense Breakdown */}
+        <Card className="bg-gray-900 border-gray-800">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Percent className="w-5 h-5 text-yellow-400" />
+              Expense Breakdown
+            </CardTitle>
+            <CardDescription>Monthly operating expenses</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64 mb-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={expenseBreakdown}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={100}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {expenseBreakdown.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="space-y-2">
+              {expenseBreakdown.map((item, index) => (
+                <div key={index} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div 
+                      className="w-3 h-3 rounded-full" 
+                      style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                    ></div>
+                    <span className="text-sm">{item.name}</span>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-medium">${item.amount.toLocaleString()}</div>
+                    <div className="text-xs text-gray-400">{item.value}%</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Key Assumptions */}
+        <Card className="bg-gray-900 border-gray-800">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Target className="w-5 h-5 text-purple-400" />
+              Key Assumptions
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="growth-rate">Monthly Growth Rate</Label>
+              <Input id="growth-rate" defaultValue="8%" className="bg-gray-800 border-gray-700" />
+            </div>
+            <div>
+              <Label htmlFor="churn-rate">Customer Churn Rate</Label>
+              <Input id="churn-rate" defaultValue="5%" className="bg-gray-800 border-gray-700" />
+            </div>
+            <div>
+              <Label htmlFor="avg-revenue">Avg Revenue per Customer</Label>
+              <Input id="avg-revenue" defaultValue="$150" className="bg-gray-800 border-gray-700" />
+            </div>
+            <div>
+              <Label htmlFor="cac">Customer Acquisition Cost</Label>
+              <Input id="cac" defaultValue="$45" className="bg-gray-800 border-gray-700" />
+            </div>
+            <Button className="w-full">
+              <Calculator className="w-4 h-4 mr-2" />
+              Recalculate
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Funding Requirements */}
+        <Card className="bg-gray-900 border-gray-800">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AlertCircle className="w-5 h-5 text-orange-400" />
+              Funding Requirements
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex justify-between">
+                <span className="text-gray-400">Initial Capital</span>
+                <span className="font-medium">$250K</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Working Capital</span>
+                <span className="font-medium">$150K</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Growth Capital</span>
+                <span className="font-medium">$400K</span>
+              </div>
+              <div className="border-t border-gray-800 pt-4">
+                <div className="flex justify-between font-bold">
+                  <span>Total Required</span>
+                  <span className="text-blue-400">$800K</span>
+                </div>
+              </div>
+              <Badge className="w-full justify-center bg-green-600/20 text-green-400 border-green-600/30">
+                <Calendar className="w-3 h-3 mr-1" />
+                Runway: 18 months
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  </div>
+</div>
+
+) } EOF
+
+/home/code/mybizai$ cat > /home/code/mybizai/app/marketing-campaigns/page.tsx << 'EOF' 'use client'
+
+import { useState } from 'react' import { Button } from '@/components/ui/button' import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card' import { Input } from '@/components/ui/input' import { Label } from '@/components/ui/label' import { Textarea } from '@/components/ui/textarea' import { Badge } from '@/components/ui/badge' import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs' import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select' import { Progress } from '@/components/ui/progress' import { Calendar } from '@/components/ui/calendar' import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover' import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar' import { Megaphone, Target, Users, Calendar as CalendarIcon, DollarSign, TrendingUp, Eye, MousePointer, Share2, Plus, Edit, Trash2, Play, Pause, BarChart3, Mail, MessageSquare, Globe, Instagram, Facebook, Twitter, Linkedin, Youtube, Sparkles } from 'lucide-react'
+
+export default function MarketingCampaignPlanner() { const [selectedDate, setSelectedDate] = useState<Date>()
+
+const campaigns = [ { id: 1, name: 'Q4 Product Launch', status: 'active', budget: 25000, spent: 18500, startDate: '2024-10-01', endDate: '2024-12-31', channels: ['social', 'email', 'ppc'], metrics: { impressions: 245000, clicks: 12300, conversions: 890, ctr: 5.02, cpc: 1.50, roas: 4.2 }, progress: 74 }, { id: 2, name: 'Holiday Season Push', status: 'scheduled', budget: 15000, spent: 0, startDate: '2024-11-15', endDate: '2024-12-25', channels: ['social', 'display'], metrics: { impressions: 0, clicks: 0, conversions: 0, ctr: 0, cpc: 0, roas: 0 }, progress: 0 }, { id: 3, name: 'Brand Awareness Drive', status: 'completed', budget: 12000, spent: 11800, startDate: '2024-08-01', endDate: '2024-09-30', channels: ['social', 'content'], metrics: { impressions: 180000, clicks: 8900, conversions: 450, ctr: 4.94, cpc: 1.33, roas: 3.8 }, progress: 100 } ]
+
+const channelIcons = { social: Instagram, email: Mail, ppc: MousePointer, display: Eye, content: MessageSquare, seo: Globe }
+
+const getStatusColor = (status: string) => { switch (status) { case 'active': return 'bg-green-600/20 text-green-400 border-green-600/30' case 'scheduled': return 'bg-blue-600/20 text-blue-400 border-blue-600/30' case 'completed': return 'bg-gray-600/20 text-gray-400 border-gray-600/30' case 'paused': return 'bg-yellow-600/20 text-yellow-400 border-yellow-600/30' default: return 'bg-gray-600/20 text-gray-400 border-gray-600/30' } }
+
+return ( <div className="min-h-screen bg-gray-950 text-white"> <div className="container mx-auto px-6 py-8"> {/* Header */} <div className="flex items-center justify-between mb-8"> <div> <h1 className="text-3xl font-bold mb-2">Marketing Campaign Planner</h1> <p className="text-gray-400">Plan, execute, and optimize your marketing campaigns</p> </div> <div className="flex items-center gap-4"> <Button variant="outline" size="sm"> <BarChart3 className="w-4 h-4 mr-2" /> Analytics </Button> <Button size="sm"> <Plus className="w-4 h-4 mr-2" /> New Campaign </Button> </div> </div>
+
+    {/* Campaign Overview Cards */}
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <Card className="bg-gray-900 border-gray-800">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-400">Active Campaigns</p>
+              <p className="text-2xl font-bold">3</p>
+            </div>
+            <div className="p-3 bg-green-600/20 rounded-lg">
+              <Megaphone className="w-6 h-6 text-green-400" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Card className="bg-gray-900 border-gray-800">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-400">Total Budget</p>
+              <p className="text-2xl font-bold">$52K</p>
+            </div>
+            <div className="p-3 bg-blue-600/20 rounded-lg">
+              <DollarSign className="w-6 h-6 text-blue-400" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-gray-900 border-gray-800">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-400">Avg ROAS</p>
+              <p className="text-2xl font-bold">4.0x</p>
+            </div>
+            <div className="p-3 bg-purple-600/20 rounded-lg">
+              <TrendingUp className="w-6 h-6 text-purple-400" />
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      <Card className="bg-gray-900 border-gray-800">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-400">Total Conversions</p>
+              <p className="text-2xl font-bold">1,340</p>
+            </div>
+            <div className="p-3 bg-yellow-600/20 rounded-lg">
+              <Target className="w-6 h-6 text-yellow-400" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* Campaign List */}
+      <div className="lg:col-span-2">
+        <Card className="bg-gray-900 border-gray-800">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>Active Campaigns</CardTitle>
+              <div className="flex items-center gap-2">
+                <Select defaultValue="all">
+                  <SelectTrigger className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="scheduled">Scheduled</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {campaigns.map((campaign) => (
+              <div key={campaign.id} className="p-4 bg-gray-800 rounded-lg">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <h3 className="font-semibold">{campaign.name}</h3>
+                    <Badge className={getStatusColor(campaign.status)}>
+                      {campaign.status}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="sm">
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm">
+                      {campaign.status === 'active' ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                    </Button>
+                    <Button variant="ghost" size="sm">
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                  <div>
+                    <p className="text-xs text-gray-400">Budget</p>
+                    <p className="font-medium">${campaign.budget.toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400">Spent</p>
+                    <p className="font-medium">${campaign.spent.toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400">ROAS</p>
+                    <p className="font-medium">{campaign.metrics.roas}x</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400">Conversions</p>
+                    <p className="font-medium">{campaign.metrics.conversions}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    {campaign.channels.map((channel) => {
+                      const Icon = channelIcons[channel as keyof typeof channelIcons]
+                      return Icon ? <Icon key={channel} className="w-4 h-4 text-gray-400" /> : null
+                    })}
+                  </div>
+                  <span className="text-sm text-gray-400">{campaign.progress}% complete</span>
+                </div>
+                
+                <Progress value={campaign.progress} className="h-2" />
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Campaign Builder */}
+      <div className="space-y-6">
+        <Card className="bg-gray-900 border-gray-800">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-blue-400" />
+              Quick Campaign Builder
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="campaign-name">Campaign Name</Label>
+              <Input 
+                id="campaign-name" 
+                placeholder="Enter campaign name"
+                className="bg-gray-800 border-gray-700"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="campaign-objective">Objective</Label>
+              <Select>
+                <SelectTrigger className="bg-gray-800 border-gray-700">
+                  <SelectValue placeholder="Select objective" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="awareness">Brand Awareness</SelectItem>
+                  <SelectItem value="traffic">Website Traffic</SelectItem>
+                  <SelectItem value="leads">Lead Generation</SelectItem>
+                  <SelectItem value="sales">Sales</SelectItem>
+                  <SelectItem value="engagement">Engagement</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="budget">Budget</Label>
+              <Input 
+                id="budget" 
+                placeholder="$0"
+                className="bg-gray-800 border-gray-700"
+              />
+            </div>
+
+            <div>
+              <Label>Target Audience</Label>
+              <Textarea 
+                placeholder="Describe your target audience..."
+                className="bg-gray-800 border-gray-700"
+              />
+            </div>
+
+            <div>
+              <Label>Channels</Label>
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                {[
+                  { id: 'social', label: 'Social Media', icon: Instagram },
+                  { id: 'email', label: 'Email', icon: Mail },
+                  { id: 'ppc', label: 'PPC Ads', icon: MousePointer },
+                  { id: 'display', label: 'Display', icon: Eye }
+                ].map((channel) => (
+                  <label key={channel.id} className="flex items-center gap-2 p-2 bg-gray-800 rounded cursor-pointer hover:bg-gray-700">
+                    <input type="checkbox" className="rounded" />
+                    <channel.icon className="w-4 h-4" />
+                    <span className="text-sm">{channel.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <Button className="w-full">
+              <Plus className="w-4 h-4 mr-2" />
+              Create Campaign
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Campaign Calendar */}
+        <Card className="bg-gray-900 border-gray-800">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CalendarIcon className="w-5 h-5 text-green-400" />
+              Campaign Calendar
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={setSelectedDate}
+              className="rounded-md border-gray-700"
+            />
+            <div className="mt-4 space-y-2">
+              <div className="flex items-center gap-2 text-sm">
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <span>Q4 Product Launch starts</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                <span>Holiday Campaign scheduled</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* AI Suggestions */}
+        <Card className="bg-gray-900 border-gray-800">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-purple-400" />
+              AI Suggestions
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="p-3 bg-gray-800 rounded-lg">
+              <p className="text-sm font-medium mb-1">Optimize Budget Allocation</p>
+              <p className="text-xs text-gray-400">Shift 15% budget from display to social media for better ROAS</p>
+            </div>
+            <div className="p-3 bg-gray-800 rounded-lg">
+              <p className="text-sm font-medium mb-1">Best Time to Post</p>
+              <p className="text-xs text-gray-400">Your audience is most active on Tuesdays at 2 PM</p>
+            </div>
+            <div className="p-3 bg-gray-800 rounded-lg">
+              <p className="text-sm font-medium mb-1">Content Suggestion</p>
+              <p className="text-xs text-gray-400">Video content performs 3x better for your audience</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  </div>
+</div>
+
+) } EOF
+
+/home/code/mybizai$ cat > /home/code/mybizai/app/market-research/page.tsx << 'EOF' 'use client'
+
+import { useState } from 'react' import { Button } from '@/components/ui/button' import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card' import { Input } from '@/components/ui/input' import { Badge } from '@/components/ui/badge' import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs' import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select' import { Progress } from '@/components/ui/progress' import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts' import { Search, TrendingUp, Users, Globe, Target, BarChart3, Download, Share2, Filter, Zap, Eye, DollarSign, Calendar } from 'lucide-react'
+
+export default function MarketResearchVisualization() { const [selectedMarket, setSelectedMarket] = useState('saas') const [timeframe, setTimeframe] = useState('12m')
+
+const marketTrends = [ { month: 'Jan', saas: 2400, ecommerce: 1800, fintech: 1200, healthcare: 900 }, { month: 'Feb', saas: 2600, ecommerce: 1900, fintech: 1300, healthcare: 950 }, { month: 'Mar', saas: 2800, ecommerce: 2100, fintech: 1400, healthcare: 1000 }, { month: 'Apr', saas: 3000, ecommerce: 2200, fintech: 1500, healthcare: 1100 }, { month: 'May', saas: 3200, ecommerce: 2400, fintech: 1600, healthcare: 1200 }, { month: 'Jun', saas: 3400, ecommerce: 2500, fintech: 1700, healthcare: 1300 }, { month: 'Jul', saas: 3600, ecommerce: 2600, fintech: 1800, healthcare: 1400 }, { month: 'Aug', saas: 3800, ecommerce: 2700, fintech: 1900, healthcare: 1500 }, { month: 'Sep', saas: 4000, ecommerce: 2800, fintech: 2000, healthcare: 1600 }, { month: 'Oct', saas: 4200, ecommerce: 2900, fintech: 2100, healthcare: 1700 }, { month: 'Nov', saas: 4400, ecommerce: 3000, fintech: 2200, healthcare: 1800 }, { month: 'Dec', saas: 4600, ecommerce: 3100, fintech: 2300, healthcare: 1900 } ]
+
+const demographicData = [ { age: '18-24', percentage: 15, value: 1500 }, { age: '25-34', percentage: 35, value: 3500 }, { age: '35-44', percentage: 28, value: 2800 }, { age: '45-54', percentage: 15, value: 1500 }, { age: '55+', percentage: 7, value: 700 } ]
+
+const competitorAnalysis = [ { subject: 'Market Share', A: 120, B: 110, fullMark: 150 }, { subject: 'Brand Recognition', A: 98, B: 130, fullMark: 150 }, { subject: 'Customer Satisfaction', A: 86, B: 99, fullMark: 150 }, { subject: 'Innovation', A: 99, B: 85, fullMark: 150 }, { subject: 'Pricing', A: 85, B: 90, fullMark: 150 }, { subject: 'Distribution', A: 65, B: 85, fullMark: 150 } ]
+
+const geographicData = [ { region: 'North America', value: 45, growth: 12 }, { region: 'Europe', value: 30, growth: 8 }, { region: 'Asia Pacific', value: 20, growth: 25 }, { region: 'Latin America', value: 3, growth: 15 }, { region: 'Others', value: 2, growth: 5 } ]
+
+const keyInsights = [ { title: 'Market Growth', value: '+23%', description: 'YoY growth in target market', trend: 'up', color: 'text-green-400' }, { title: 'Market Size', value: '$4.2B', description: 'Total addressable market', trend: 'up', color: 'text-blue-400' }, { title: 'Competition Level', value: 'Medium', description: 'Based on market saturation', trend: 'neutral', color: 'text-yellow-400' }, { title: 'Entry Barrier', value: 'Low', description: 'Ease of market entry', trend: 'up', color: 'text-green-400' } ]
+
+const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
+
+return ( <div className="min-h-screen bg-gray-950 text-white"> <div className="container mx-auto px-6 py-8"> {/* Header */} <div className="flex items-center justify-between mb-8"> <div> <h1 className="text-3xl font-bold mb-2">Market Research Visualization</h1> <p className="text-gray-400">Analyze market trends, demographics, and competitive landscape</p> </div> <div className="flex items-center gap-4"> <Select value={selectedMarket} onValueChange={setSelectedMarket}> <SelectTrigger className="w-32"> <SelectValue /> </SelectTrigger> <SelectContent> <SelectItem value="saas">SaaS</SelectItem> <SelectItem value="ecommerce">E-commerce</SelectItem> <SelectItem value="fintech">FinTech</SelectItem> <SelectItem value="healthcare">Healthcare</SelectItem> </SelectContent> </Select> <Select value={timeframe} onValueChange={setTimeframe}> <SelectTrigger className="w-24"> <SelectValue /> </SelectTrigger> <SelectContent> <SelectItem value="6m">6M</SelectItem> <SelectItem value="12m">12M</SelectItem> <SelectItem value="24m">24M</SelectItem> </SelectContent> </Select> <Button variant="outline" size="sm"> <Share2 className="w-4 h-4 mr-2" /> Share </Button> <Button variant="outline" size="sm"> <Download className="w-4 h-4 mr-2" /> Export </Button> </div> </div>
+
+    {/* Key Insights */}
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      {keyInsights.map((insight, index) => (
+        <Card key={index} className="bg-gray-900 border-gray-800">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400">{insight.title}</p>
+                <p className={`text-2xl font-bold ${insight.color}`}>{insight.value}</p>
+                <p className="text-xs text-gray-500 mt-1">{insight.description}</p>
+              </div>
+              <div className="p-3 bg-blue-600/20 rounded-lg">
+                <TrendingUp className="w-6 h-6 text-blue-400" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+
+    <Tabs defaultValue="trends" className="w-full">
+      <TabsList className="grid w-full grid-cols-5 bg-gray-900">
+        <TabsTrigger value="trends">Market Trends</TabsTrigger>
+        <TabsTrigger value="demographics">Demographics</TabsTrigger>
+        <TabsTrigger value="competition">Competition</TabsTrigger>
+        <TabsTrigger value="geography">Geography</TabsTrigger>
+        <TabsTrigger value="insights">AI Insights</TabsTrigger>
+      </TabsList>
+
+      <TabsContent value="trends" className="mt-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <Card className="bg-gray-900 border-gray-800">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-blue-400" />
+                  Market Growth Trends
+                </CardTitle>
+                <CardDescription>Monthly market size across different sectors</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={marketTrends}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                      <XAxis dataKey="month" stroke="#9ca3af" />
+                      <YAxis stroke="#9ca3af" />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: '#1f2937', 
+                          border: '1px solid #374151',
+                          borderRadius: '8px'
+                        }}
+                      />
+                      <Line type="monotone" dataKey="saas" stroke="#3b82f6" strokeWidth={3} />
+                      <Line type="monotone" dataKey="ecommerce" stroke="#10b981" strokeWidth={2} />
+                      <Line type="monotone" dataKey="fintech" stroke="#f59e0b" strokeWidth={2} />
+                      <Line type="monotone" dataKey="healthcare" stroke="#ef4444" strokeWidth={2} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="space-y-6">
+            <Card className="bg-gray-900 border-gray-800">
+              <CardHeader>
+                <CardTitle className="text-lg">Market Opportunities</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="p-3 bg-gray-800 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium">AI Integration</span>
+                    <Badge className="bg-green-600/20 text-green-400">High</Badge>
+                  </div>
+                  <p className="text-xs text-gray-400">Growing demand for AI-powered solutions</p>
+                </div>
+                <div className="p-3 bg-gray-800 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium">Mobile-First</span>
+                    <Badge className="bg-blue-600/20 text-blue-400">Medium</Badge>
+                  </div>
+                  <p className="text-xs text-gray-400">Shift towards mobile-first experiences</p>
+                </div>
+                <div className="p-3 bg-gray-800 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium">Sustainability</span>
+                    <Badge className="bg-yellow-600/20 text-yellow-400">Medium</Badge>
+                  </div>
+                  <p className="text-xs text-gray-400">Eco-friendly solutions gaining traction</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gray-900 border-gray-800">
+              <CardHeader>
+                <CardTitle className="text-lg">Market Threats</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="p-3 bg-gray-800 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium">Economic Downturn</span>
+                    <Badge className="bg-red-600/20 text-red-400">High</Badge>
+                  </div>
+                  <p className="text-xs text-gray-400">Potential recession impact</p>
+                </div>
+                <div className="p-3 bg-gray-800 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium">Regulation Changes</span>
+                    <Badge className="bg-yellow-600/20 text-yellow-400">Medium</Badge>
+                  </div>
+                  <p className="text-xs text-gray-400">New compliance requirements</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </TabsContent>
+
+      <TabsContent value="demographics" className="mt-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="bg-gray-900 border-gray-800">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-green-400" />
+                Age Demographics
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={demographicData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={120}
+                      paddingAngle={5}
+                      dataKey="percentage"
+                    >
+                      {demographicData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="grid grid-cols-2 gap-2 mt-4">
+                {demographicData.map((item, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <div 
+                      className="w-3 h-3 rounded-full" 
+                      style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                    ></div>
+                    <span className="text-sm">{item.age}: {item.percentage}%</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gray-900 border-gray-800">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-purple-400" />
+                Customer Segments
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={demographicData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <XAxis dataKey="age" stroke="#9ca3af" />
+                    <YAxis stroke="#9ca3af" />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: '#1f2937', 
+                        border: '1px solid #374151',
+                        borderRadius: '8px'
+                      }}
+                    />
+                    <Bar dataKey="value" fill="#3b82f6" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </TabsContent>
+
+      <TabsContent value="competition" className="mt-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="bg-gray-900 border-gray-800">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Target className="w-5 h-5 text-red-400" />
+                Competitive Analysis
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart data={competitorAnalysis}>
+                    <PolarGrid />
+                    <PolarAngleAxis dataKey="subject" />
+                    <PolarRadiusAxis />
+                    <Radar name="Your Company" dataKey="A" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.3} />
+                    <Radar name="Competitor" dataKey="B" stroke="#ef4444" fill="#ef4444" fillOpacity={0.3} />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="flex items-center justify-center gap-6 mt-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                  <span className="text-sm">Your Company</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                  <span className="text-sm">Main Competitor</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gray-900 border-gray-800">
+            <CardHeader>
+              <CardTitle>Competitive Landscape</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-4 bg-gray-800 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-medium">Market Leader</h4>
+                  <Badge className="bg-red-600/20 text-red-400">High Threat</Badge>
+                </div>
+                <p className="text-sm text-gray-400 mb-2">TechCorp Solutions - 35% market share</p>
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs">
+                    <span>Market Share</span>
+                    <span>35%</span>
+                  </div>
+                  <Progress value={35} className="h-1" />
+                </div>
+              </div>
+
+              <div className="p-4 bg-gray-800 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-medium">Rising Competitor</h4>
+                  <Badge className="bg-yellow-600/20 text-yellow-400">Medium Threat</Badge>
+                </div>
+                <p className="text-sm text-gray-400 mb-2">InnovateAI - 18% market share</p>
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs">
+                    <span>Market Share</span>
+                    <span>18%</span>
+                  </div>
+                  <Progress value={18} className="h-1" />
+                </div>
+              </div>
+
+              <div className="p-4 bg-gray-800 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-medium">Niche Player</h4>
+                  <Badge className="bg-green-600/20 text-green-400">Low Threat</Badge>
+                </div>
+                <p className="text-sm text-gray-400 mb-2">SpecialtyTech - 8% market share</p>
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs">
+                    <span>Market Share</span>
+                    <span>8%</span>
+                  </div>
+                  <Progress value={8} className="h-1" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </TabsContent>
+
+      <TabsContent value="geography" className="mt-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="bg-gray-900 border-gray-800">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Globe className="w-5 h-5 text-blue-400" />
+                Geographic Distribution
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {geographicData.map((region, index) => (
+                  <div key={index} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">{region.region}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm">{region.value}%</span>
+                        <Badge className={`text-xs ${region.growth > 15 ? 'bg-green-600/20 text-green-400' : region.growth > 10 ? 'bg-yellow-600/20 text-yellow-400' : 'bg-gray-600/20 text-gray-400'}`}>
+                          +{region.growth}%
+                        </Badge>
+                      </div>
+                    </div>
+                    <Progress value={region.value} className="h-2" />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gray-900 border-gray-800">
+            <CardHeader>
+              <CardTitle>Regional Insights</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-4 bg-gray-800 rounded-lg">
+                <h4 className="font-medium mb-2">North America</h4>
+                <p className="text-sm text-gray-400">Mature market with steady growth. High competition but strong purchasing power.</p>
+              </div>
+              <div className="p-4 bg-gray-800 rounded-lg">
+                <h4 className="font-medium mb-2">Asia Pacific</h4>
+                <p className="text-sm text-gray-400">Fastest growing region. Emerging markets with high potential but varying regulations.</p>
+              </div>
+              <div className="p-4 bg-gray-800 rounded-lg">
+                <h4 className="font-medium mb-2">Europe</h4>
+                <p className="text-sm text-gray-400">Stable market with strong regulatory framework. Focus on privacy and sustainability.</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </TabsContent>
+
+      <TabsContent value="insights" className="mt-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="bg-gray-900 border-gray-800">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Zap className="w-5 h-5 text-yellow-400" />
+                AI-Powered Insights
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-4 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-lg border border-blue-600/30">
+                <h4 className="font-medium mb-2 flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4" />
+                  Market Opportunity
+                </h4>
+                <p className="text-sm text-gray-300">The SaaS market is experiencing 23% YoY growth with low entry barriers. AI integration presents the highest opportunity with 67% of companies planning adoption.</p>
+              </div>
+
+              <div className="p-4 bg-gradient-to-r from-green-600/20 to-blue-600/20 rounded-lg border border-green-600/30">
+                <h4 className="font-medium mb-2 flex items-center gap-2">
+                  <Target className="w-4 h-4" />
+                  Optimal Target Segment
+                </h4>
+                <p className="text-sm text-gray-300">Focus on 25-34 age group in North America and Asia Pacific. This segment shows highest engagement and purchasing power.</p>
+              </div>
+
+              <div className="p-4 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-lg border border-purple-600/30">
+                <h4 className="font-medium mb-2 flex items-center gap-2">
+                  <DollarSign className="w-4 h-4" />
+                  Pricing Strategy
+                </h4>
+                <p className="text-sm text-gray-300">Market analysis suggests a premium pricing strategy would be most effective, with 73% of target customers willing to pay 20% more for AI features.</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gray-900 border-gray-800">
+            <CardHeader>
+              <CardTitle>Recommended Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-4 bg-gray-800 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-medium">Expand to Asia Pacific</h4>
+                  <Badge className="bg-green-600/20 text-green-400">High Priority</Badge>
+                </div>
+                <p className="text-sm text-gray-400">25% growth rate presents significant opportunity</p>
+              </div>
+
+              <div className="p-4 bg-gray-800 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-medium">Develop AI Features</h4>
+                  <Badge className="bg-green-600/20 text-green-400">High Priority</Badge>
+                </div>
+                <p className="text-sm text-gray-400">67% of market planning AI adoption in next 12 months</p>
+              </div>
+
+              <div className="p-4 bg-gray-800 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-medium">Mobile-First Strategy</h4>
+                  <Badge className="bg-yellow-600/20 text-yellow-400">Medium Priority</Badge>
+                </div>
+                <p className="text-sm text-gray-400">Mobile usage growing 15% annually in target segments</p>
+              </div>
+
+              <div className="p-4 bg-gray-800 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-medium">Partnership Strategy</h4>
+                  <Badge className="bg-blue-600/20 text-blue-400">Medium Priority</Badge>
+                </div>
+                <p className="text-sm text-gray-400">Strategic partnerships could accelerate market entry</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </TabsContent>
+    </Tabs>
+  </div>
+</div>
+
+) } EOF
+
+/home/code/mybizai$ cat > /home/code/mybizai/app/brand-builder/page.tsx << 'EOF' 'use client'
+
+import { useState } from 'react' import { Button } from '@/components/ui/button' import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card' import { Input } from '@/components/ui/input' import { Label } from '@/components/ui/label' import { Textarea } from '@/components/ui/textarea' import { Badge } from '@/components/ui/badge' import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs' import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select' import { Slider } from '@/components/ui/slider' import { Switch } from '@/components/ui/switch' import { Separator } from '@/components/ui/separator' import { Palette, Type, Download, Share2, Sparkles, Eye, Copy, RefreshCw, Save, Wand2, Image, FileText, Zap, Monitor, Smartphone, Printer, Globe } from 'lucide-react'
+
+export default function BrandIdentityKitBuilder() { const [brandName, setBrandName] = useState('MyBrand') const [selectedStyle, setSelectedStyle] = useState('modern') const [primaryColor, setPrimaryColor] = useState('#3b82f6') const [logoVariation, setLogoVariation] = useState('horizontal')
+
+const colorPalettes = [ { name: 'Ocean Blue', primary: '#3b82f6', secondary: '#1e40af', accent: '#06b6d4', colors: ['#3b82f6', '#1e40af', '#06b6d4', '#0891b2', '#0e7490'] }, { name: 'Forest Green', primary: '#10b981', secondary: '#059669', accent: '#34d399', colors: ['#10b981', '#059669', '#34d399', '#6ee7b7', '#a7f3d0'] }, { name: 'Sunset Orange', primary: '#f59e0b', secondary: '#d97706', accent: '#fbbf24', colors: ['#f59e0b', '#d97706', '#fbbf24', '#fcd34d', '#fde68a'] }, { name: 'Royal Purple', primary: '#8b5cf6', secondary: '#7c3aed', accent: '#a78bfa', colors: ['#8b5cf6', '#7c3aed', '#a78bfa', '#c4b5fd', '#ddd6fe'] }, { name: 'Rose Pink', primary: '#ec4899', secondary: '#db2777', accent: '#f472b6', colors: ['#ec4899', '#db2777', '#f472b6', '#f9a8d4', '#fbcfe8'] } ]
+
+const logoStyles = [ { id: 'modern', name: 'Modern', description: 'Clean, minimalist design' }, { id: 'classic', name: 'Classic', description: 'Timeless, traditional look' }, { id: 'playful', name: 'Playful', description: 'Fun, creative approach' }, { id: 'elegant', name: 'Elegant', description: 'Sophisticated, refined style' }, { id: 'bold', name: 'Bold', description: 'Strong, impactful design' } ]
+
+const fontPairings = [ { primary: 'Inter', secondary: 'Source Sans Pro', category: 'Modern Sans-Serif' }, { primary: 'Playfair Display', secondary: 'Source Sans Pro', category: 'Elegant Serif' }, { primary: 'Montserrat', secondary: 'Open Sans', category: 'Geometric Sans' }, { primary: 'Merriweather', secondary: 'Lato', category: 'Classic Serif' }, { primary: 'Poppins', secondary: 'Nunito', category: 'Friendly Sans' } ]
+
+const brandAssets = [ { type: 'Logo', formats: ['SVG', 'PNG', 'PDF'], status: 'ready' }, { type: 'Business Card', formats: ['PDF', 'AI'], status: 'ready' }, { type: 'Letterhead', formats: ['PDF', 'DOCX'], status: 'generating' }, { type: 'Social Media Kit', formats: ['PNG', 'JPG'], status: 'ready' }, { type: 'Brand Guidelines', formats: ['PDF'], status: 'ready' }, { type: 'Website Mockup', formats: ['PNG', 'PSD'], status: 'generating' } ]
+
+return ( <div className="min-h-screen bg-gray-950 text-white"> <div className="container mx-auto px-6 py-8"> {/* Header */} <div className="flex items-center justify-between mb-8"> <div> <h1 className="text-3xl font-bold mb-2">Brand Identity Kit Builder</h1> <p className="text-gray-400">Create a complete brand identity with AI-powered design tools</p> </div> <div className="flex items-center gap-4"> <Button variant="outline" size="sm"> <Eye className="w-4 h-4 mr-2" /> Preview </Button> <Button variant="outline" size="sm"> <Share2 className="w-4 h-4 mr-2" /> Share </Button> <Button size="sm"> <Download className="w-4 h-4 mr-2" /> Download Kit </Button> </div> </div>
+
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* Configuration Panel */}
+      <div className="lg:col-span-1 space-y-6">
+        {/* Brand Basics */}
+        <Card className="bg-gray-900 border-gray-800">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-blue-400" />
+              Brand Basics
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="brand-name">Brand Name</Label>
+              <Input
+                id="brand-name"
+                value={brandName}
+                onChange={(e) => setBrandName(e.target.value)}
+                className="bg-gray-800 border-gray-700"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="tagline">Tagline</Label>
+              <Input
+                id="tagline"
+                placeholder="Your brand tagline"
+                className="bg-gray-800 border-gray-700"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="industry">Industry</Label>
+              <Select>
+                <SelectTrigger className="bg-gray-800 border-gray-700">
+                  <SelectValue placeholder="Select industry" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="tech">Technology</SelectItem>
+                  <SelectItem value="finance">Finance</SelectItem>
+                  <SelectItem value="healthcare">Healthcare</SelectItem>
+                  <SelectItem value="retail">Retail</SelectItem>
+                  <SelectItem value="education">Education</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="description">Brand Description</Label>
+              <Textarea
+                id="description"
+                placeholder="Describe your brand personality and values..."
+                className="bg-gray-800 border-gray-700"
+              />
+            </div>
+
+            <Button className="w-full">
+              <Wand2 className="w-4 h-4 mr-2" />
+              Generate with AI
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Style Selection */}
+        <Card className="bg-gray-900 border-gray-800">
+          <CardHeader>
+            <CardTitle>Design Style</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {logoStyles.map((style) => (
+              <div
+                key={style.id}
+                className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                  selectedStyle === style.id
+                    ? 'border-blue-500 bg-blue-600/20'
+                    : 'border-gray-700 hover:border-gray-600'
+                }`}
+                onClick={() => setSelectedStyle(style.id)}
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium">{style.name}</h4>
+                    <p className="text-sm text-gray-400">{style.description}</p>
+                  </div>
+                  {selectedStyle === style.id && (
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Color Palette */}
+        <Card className="bg-gray-900 border-gray-800">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Palette className="w-5 h-5 text-purple-400" />
+              Color Palette
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {colorPalettes.map((palette, index) => (
+              <div key={index} className="p-3 bg-gray-800 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium">{palette.name}</span>
+                  <Button variant="ghost" size="sm">
+                    <Copy className="w-3 h-3" />
+                  </Button>
+                </div>
+                <div className="flex gap-1">
+                  {palette.colors.map((color, colorIndex) => (
+                    <div
+                      key={colorIndex}
+                      className="w-8 h-8 rounded cursor-pointer border border-gray-700"
+                      style={{ backgroundColor: color }}
+                      onClick={() => setPrimaryColor(color)}
+                    ></div>
+                  ))}
+                </div>
+              </div>
+            ))}
+            
+            <Button variant="outline" className="w-full">
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Generate New Palette
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Preview and Assets */}
+      <div className="lg:col-span-2 space-y-6">
+        {/* Logo Preview */}
+        <Card className="bg-gray-900 border-gray-800">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>Logo Preview</CardTitle>
+              <div className="flex items-center gap-2">
+                <Select value={logoVariation} onValueChange={setLogoVariation}>
+                  <SelectTrigger className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="horizontal">Horizontal</SelectItem>
+                    <SelectItem value="vertical">Vertical</SelectItem>
+                    <SelectItem value="icon">Icon Only</SelectItem>
+                    <SelectItem value="text">Text Only</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="bg-gray-800 rounded-lg p-8 flex items-center justify-center min-h-[200px]">
+              <div className="text-center">
+                <div 
+                  className="text-4xl font-bold mb-2"
+                  style={{ color: primaryColor }}
+                >
+                  {brandName}
+                </div>
+                <div className="text-gray-400 text-sm">Your tagline here</div>
+              </div>
+            </div>
+            
+            {/* Preview Options */}
+            <div className="flex items-center justify-center gap-4 mt-4">
+              <Button variant="ghost" size="sm">
+                <Monitor className="w-4 h-4 mr-2" />
+                Desktop
+              </Button>
+              <Button variant="ghost" size="sm">
+                <Smartphone className="w-4 h-4 mr-2" />
+                Mobile
+              </Button>
+              <Button variant="ghost" size="sm">
+                <Printer className="w-4 h-4 mr-2" />
+                Print
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Tabs defaultValue="assets" className="w-full">
+          <TabsList className="grid w-full grid-cols-4 bg-gray-900">
+            <TabsTrigger value="assets">Assets</TabsTrigger>
+            <TabsTrigger value="typography">Typography</TabsTrigger>
+            <TabsTrigger value="applications">Applications</TabsTrigger>
+            <TabsTrigger value="guidelines">Guidelines</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="assets" className="mt-6">
+            <Card className="bg-gray-900 border-gray-800">
+              <CardHeader>
+                <CardTitle>Brand Assets</CardTitle>
+                <CardDescription>Download your complete brand identity kit</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {brandAssets.map((asset, index) => (
+                    <div key={index} className="p-4 bg-gray-800 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium">{asset.type}</h4>
+                        <Badge className={
+                          asset.status === 'ready' 
+                            ? 'bg-green-600/20 text-green-400' 
+                            : 'bg-yellow-600/20 text-yellow-400'
+                        }>
+                          {asset.status}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center gap-2 mb-3">
+                        {asset.formats.map((format, formatIndex) => (
+                          <Badge key={formatIndex} variant="outline" className="text-xs">
+                            {format}
+                          </Badge>
+                        ))}
+                      </div>
+                      <Button 
+                        size="sm" 
+                        className="w-full"
+                        disabled={asset.status !== 'ready'}
+                      >
+                        <Download className="w-3 h-3 mr-2" />
+                        Download
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="typography" className="mt-6">
+            <Card className="bg-gray-900 border-gray-800">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Type className="w-5 h-5 text-green-400" />
+                  Typography System
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {fontPairings.map((pairing, index) => (
+                  <div key={index} className="p-4 bg-gray-800 rounded-lg">
+                    <div className="flex items-center justify-between mb-4">
+                      <Badge variant="outline">{pairing.category}</Badge>
+                      <Button variant="ghost" size="sm">
+                        <Copy className="w-3 h-3" />
+                      </Button>
+                    </div>
+                    <div className="space-y-2">
+                      <div>
+                        <p className="text-xs text-gray-400 mb-1">Primary Font</p>
+                        <p className="text-2xl font-bold" style={{ fontFamily: pairing.primary }}>
+                          {pairing.primary}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-400 mb-1">Secondary Font</p>
+                        <p className="text-lg" style={{ fontFamily: pairing.secondary }}>
+                          {pairing.secondary}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="applications" className="mt-6">
+            <Card className="bg-gray-900 border-gray-800">
+              <CardHeader>
+                <CardTitle>Brand Applications</CardTitle>
+                <CardDescription>See how your brand looks across different mediums</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <h4 className="font-medium">Business Stationery</h4>
+                    <div className="bg-gray-800 rounded-lg p-4 aspect-[3/2] flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="w-16 h-16 bg-blue-600 rounded-lg mb-2 mx-auto"></div>
+                        <p className="text-sm">Business Card</p>
+                      </div>
+                    </div>
+                    <div className="bg-gray-800 rounded-lg p-4 aspect-[4/3] flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="w-20 h-20 bg-blue-600 rounded-lg mb-2 mx-auto"></div>
+                        <p className="text-sm">Letterhead</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <h4 className="font-medium">Digital Assets</h4>
+                    <div className="bg-gray-800 rounded-lg p-4 aspect-[16/9] flex items-center justify-center">
+                      <div className="text-center">
+                        <Globe className="w-12 h-12 text-blue-400 mx-auto mb-2" />
+                        <p className="text-sm">Website Header</p>
+                      </div>
+                    </div>
+                    <div className="bg-gray-800 rounded-lg p-4 aspect-square flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="w-16 h-16 bg-blue-600 rounded-lg mb-2 mx-auto"></div>
+                        <p className="text-sm">Social Media</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="guidelines" className="mt-6">
+            <Card className="bg-gray-900 border-gray-800">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-orange-400" />
+                  Brand Guidelines
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="p-4 bg-gray-800 rounded-lg">
+                  <h4 className="font-medium mb-2">Logo Usage</h4>
+                  <p className="text-sm text-gray-400 mb-4">Guidelines for proper logo implementation</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center">
+                      <div className="bg-gray-700 rounded p-4 mb-2">
+                        <div className="text-green-400">✓ Correct</div>
+                      </div>
+                      <p className="text-xs text-gray-400">Proper spacing</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="bg-gray-700 rounded p-4 mb-2">
+                        <div className="text-red-400">✗ Incorrect</div>
+                      </div>
+                      <p className="text-xs text-gray-400">Too cramped</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-gray-800 rounded-lg">
+                  <h4 className="font-medium mb-2">Color Specifications</h4>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <div className="w-full h-12 bg-blue-600 rounded mb-2"></div>
+                      <p className="text-xs font-medium">Primary Blue</p>
+                      <p className="text-xs text-gray-400">HEX: #3B82F6</p>
+                      <p className="text-xs text-gray-400">RGB: 59, 130, 246</p>
+                    </div>
+                    <div>
+                      <div className="w-full h-12 bg-gray-600 rounded mb-2"></div>
+                      <p className="text-xs font-medium">Secondary Gray</p>
+                      <p className="text-xs text-gray-400">HEX: #6B7280</p>
+                      <p className="text-xs text-gray-400">RGB: 107, 114, 128</p>
+                    </div>
+                    <div>
+                      <div className="w-full h-12 bg-green-600 rounded mb-2"></div>
+                      <p className="text-xs font-medium">Accent Green</p>
+                      <p className="text-xs text-gray-400">HEX: #10B981</p>
+                      <p className="text-xs text-gray-400">RGB: 16, 185, 129</p>
+                    </div>
+                  </div>
+                </div>
+
+                <Button className="w-full">
+                  <Download className="w-4 h-4 mr-2" />
+                  Download Complete Guidelines (PDF)
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  </div>
+</div>
+
+) } EOF
+
+/home/code/mybizai$ cat > /home/code/mybizai/app/legal-compliance/page.tsx << 'EOF' 'use client'
+
+import { useState } from 'react' import { Button } from '@/components/ui/button' import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card' import { Input } from '@/components/ui/input' import { Label } from '@/components/ui/label' import { Textarea } from '@/components/ui/textarea' import { Badge } from '@/components/ui/badge' import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs' import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select' import { AlertTriangle, BookOpen, ShieldCheck, FileText, Users, Scale, Lock, Lightbulb, Download, Share2 } from 'lucide-react'
+
+export default function LegalComplianceGuidance() { const [selectedArea, setSelectedArea] = useState('business-registration')
+
+const legalAreas = [ { id: 'business-registration', title: 'Business Registration', icon: FileText }, { id: 'data-privacy', title: 'Data Privacy', icon: Lock }, { id: 'contract-law', title: 'Contract Law', icon: Scale }, { id: 'intellectual-property', title: 'Intellectual Property', icon: ShieldCheck }, { id: 'consumer-protection', title: 'Consumer Protection', icon: Users }, { id: 'dispute-resolution', title: 'Dispute Resolution', icon: AlertTriangle } ]
+
+const aiRegulationSummaries = { 'business-registration': 'AI-powered summary of business registration requirements in your selected jurisdiction. Includes links to relevant government resources and filing procedures.', 'data-privacy': 'AI-generated overview of key data privacy regulations (GDPR, CCPA, etc.) and best practices for compliance. Includes data security recommendations and consent management strategies.', 'contract-law': 'AI-driven analysis of contract law principles and common clauses. Provides guidance on drafting, reviewing, and negotiating contracts.', 'intellectual-property': 'AI-assisted guidance on protecting your intellectual property, including trademarks, copyrights, and patents. Includes tips on IP enforcement and licensing.', 'consumer-protection': 'AI-powered summaries of consumer protection laws and regulations. Provides guidance on advertising standards, product safety, and consumer rights.', 'dispute-resolution': 'AI-generated insights on dispute resolution methods, including negotiation, mediation, and arbitration. Includes tips on avoiding and resolving business disputes.' }
+
+return ( <div className="min-h-screen bg-gray-950 text-white"> <div className="container mx-auto px-6 py-8"> {/* Header */} <div className="flex items-center justify-between mb-8"> <div> <h1 className="text-3xl font-bold mb-2">Legal & Compliance Guidance</h1> <p className="text-gray-400">AI-powered assistance for your business's legal needs</p> </div> <div className="flex items-center gap-4"> <Button variant="outline" size="sm"> <Download className="w-4 h-4 mr-2" /> Download Report </Button> <Button size="sm"> <BookOpen className="w-4 h-4 mr-2" /> View Knowledge Base </Button> </div> </div>
+
+    {/* Disclaimer */}
+    <Card className="bg-yellow-900/20 border-yellow-600/30 text-yellow-300 mb-8">
+      <CardContent className="p-6 flex items-center gap-3">
+        <AlertTriangle className="w-6 h-6" />
+        <p className="text-sm">
+          The information and resources provided by this tool are for guidance purposes only and do not constitute legal advice. We strongly recommend consulting a qualified legal professional for advice on your specific legal matters.
+        </p>
+      </CardContent>
+    </Card>
+
+    <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      {/* Legal Areas */}
+      <div className="lg:col-span-1">
+        <Card className="bg-gray-900 border-gray-800">
+          <CardHeader>
+            <CardTitle className="text-lg">Common Legal Areas</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {legalAreas.map((area) => (
+              <button
+                key={area.id}
+                onClick={() => setSelectedArea(area.id)}
+                className={`w-full text-left p-3 rounded-lg transition-colors flex items-center gap-3 ${
+                  selectedArea === area.id
+                    ? 'bg-blue-600/20 text-blue-400'
+                    : 'hover:bg-gray-800'
+                }`}
+              >
+                <area.icon className="w-4 h-4 text-blue-400" />
+                <span className="text-sm">{area.title}</span>
+              </button>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Main Content */}
+      <div className="lg:col-span-3">
+        <Card className="bg-gray-900 border-gray-800">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lightbulb className="w-5 h-5 text-yellow-400" />
+              AI-Powered Regulation Summaries
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-gray-300">
+              {aiRegulationSummaries[selectedArea as keyof typeof aiRegulationSummaries]}
+            </p>
+            <Button variant="outline" size="sm">
+              <Zap className="w-4 h-4 mr-2" />
+              Generate Custom Summary
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gray-900 border-gray-800 mt-6">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>Legal Resources</CardTitle>
+              <Button variant="outline" size="sm">
+                View All
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="p-4 bg-gray-800 rounded-lg">
+              <h4 className="font-medium">Business Registration Checklist</h4>
+              <p className="text-sm text-gray-400">Step-by-step guide to register your business</p>
+            </div>
+            <div className="p-4 bg-gray-800 rounded-lg">
+              <h4 className="font-medium">Data Privacy Policy Template</h4>
+              <p className="text-sm text-gray-400">Template for creating a GDPR-compliant privacy policy</p>
+            </div>
+            <div className="p-4 bg-gray-800 rounded-lg">
+              <h4 className="font-medium">Contract Law Basics</h4>
+              <p className="text-sm text-gray-400">Essential principles of contract law for entrepreneurs</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  </div>
+</div>
+
+) } EOF
+
+$

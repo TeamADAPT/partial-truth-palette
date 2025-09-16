@@ -1,0 +1,96 @@
+our task:
+
+The bleeding-edge, production stack
+
+Framework & runtime: Next.js (App Router, RSC) on Bun. Fast dev server, server actions, file-based routing, saasfly template. zero nonsense.
+
+Language & types: TypeScript everywhere. No exceptions.
+
+Design system layer: shadcn/ui (Radix primitives), Tailwind, and tailwind-variants for variants and tokens. Icons via lucide-react.
+
+State & data fetching: TanStack Query for async server state. Minimal client state with Zustand when you must. Anything global beyond that is a smell.
+
+API contract: tRPC with Zod schemas. End-to-end types without the GraphQL overhead cosplay.
+
+Forms: React Hook Form + @hookform/resolvers/zod. Fast, typed, and doesn’t fight you.
+
+Database & ORM: PostgreSQL + Drizzle ORM. Simple, typed SQL that won’t gaslight you at 2 a.m. Use Drizzle Kit for migrations.
+
+Auth: Lucia. Lightweight, framework-friendly, and typed. Session cookies over JWT unless you truly need stateless.
+
+File uploads: UploadThing wired to Next Route Handlers. Works, ships fast, no drama.
+
+Realtime: tRPC websockets. Keep it in the same type universe, skip the “which socket lib” bike shed.
+
+Animations & polish: Framer Motion. Sprinkle, don’t drown.
+
+i18n: next-intl. File-based messages that don’t feel like punishment.
+
+Analytics & events: PostHog for product analytics. Funnels, feature flags, heatmaps without handing your soul to ad tech.
+
+Errors & traces: Sentry + OpenTelemetry. Know what exploded and why, with actual spans instead of vibes.
+
+Testing: Vitest (unit), @testing-library/react (component), Playwright (E2E), axe-core (a11y checks). Green tests or it doesn’t ship.
+
+DX & quality: Biome (formatter + linter), Husky or lefthook for pre-commit, changesets for versioning. Turborepo for workspaces/monorepo. pnpm if you want deterministic installs over Bun’s youthful enthusiasm.
+
+Email & templates: React Email. You write React once, it renders in Outlook’s weird universe.
+
+Feature flags: Unleash. Flip things on safely, like an adult.
+
+How it fits together (so your repo isn’t chaos)
+
+/app: Next App Router routes, server actions for mutations, route handlers for APIs tRPC can call internally.
+
+/server: tRPC routers, Zod schemas, Drizzle models, auth utils. One typesafe boundary, many happy neurons.
+
+/components: shadcn/ui primitives extended with tailwind-variants. Keep them presentational.
+
+**/features/**x: Vertical slices that combine UI + hooks + queries. No cross-feature imports unless shared.
+
+/lib: clients, config, analytics, sentry, otel, helpers.
+
+/tests: Playwright and Vitest live here with sensible fixtures and test data.
+
+Sensible defaults and opinions you’ll thank me for later
+
+Prefer RSC + server actions for writes; cache reads with TanStack Query where interactivity matters.
+
+Zod at the edges only. Don’t carpet your domain with runtime validation you don’t need.
+
+Drizzle migrations checked into git. No “state drift” mysteries.
+
+Keep a design tokens file and wire tailwind-variants to it. Consistency is a feature.
+
+Add a /storybook only if your team does real design-dev collaboration. Otherwise use Ladle or skip it.
+
+Deployment on Ubuntu (since you’re not playing serverless)
+
+Build with pnpm build (or bun build), run Next standalone behind Caddy or Nginx, process manager via systemd.
+
+Postgres via system packages or a managed instance you actually trust. Drizzle migrates on boot in a controlled step, not on every request.
+
+Wire Sentry DSN and OTel exporter envs from systemd units. Logs to journald plus your aggregator of choice.
+
+Upgrade hooks you’ll want on day two
+
+RUM + Core Web Vitals shipped to PostHog.
+
+Progressive hydration for heavy pages.
+
+Image pipelines: next/image with sharp, responsive sizes set correctly.
+
+A11y gates: axe in CI, kill the build on critical.
+
+Rate limiting on route handlers with a tiny Redis bucket
+
+regardless of what the docs say...the app is MyBizAI
+
+"Empowering entrepreneurs with a fully autonomous business ecosystem that evolves and grows, enabling hands-free management and maximized income generation."
+
+"Create, Automate, Thrive with MyBizAI"
+
+Innovative: Harnessing cutting-edge AI technology to create and manage businesses.
+Autonomous: Hands-free management, with AI agents handling every aspect.
+Scalable: Flexible solutions that grow with your business.
+Efficient: Streamlined processes for optimal performance and profitability.
