@@ -20,6 +20,10 @@ import PersonalizationSetup from "./pages/PersonalizationSetup";
 import PlanComparison from "./pages/PlanComparison";
 import ProjectTemplates from "./pages/ProjectTemplates";
 import BrainstormingOptions from "./pages/BrainstormingOptions";
+import AIAgent from "./pages/AIAgent";
+import CompetitiveAnalysis from "./pages/CompetitiveAnalysis";
+import FinancialProjections from "./pages/FinancialProjections";
+import TeamInvite from "./pages/TeamInvite";
 import NotFound from "./pages/NotFound";
 import { useState } from "react";
 
@@ -53,9 +57,13 @@ const AppLayout = () => {
             <Route path="/market-research" element={<MarketResearch />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/personalization" element={<PersonalizationSetup />} />
-            <Route path="/plans" element={<PlanComparison />} />
-            <Route path="/templates" element={<ProjectTemplates />} />
-            <Route path="/brainstorming" element={<BrainstormingOptions />} />
+                <Route path="/plans" element={<PlanComparison />} />
+                <Route path="/templates" element={<ProjectTemplates />} />
+                <Route path="/brainstorming" element={<BrainstormingOptions />} />
+                <Route path="/ai-agent" element={<AIAgent />} />
+                <Route path="/competitive-analysis" element={<CompetitiveAnalysis />} />
+                <Route path="/financial-projections" element={<FinancialProjections />} />
+                <Route path="/team-invite" element={<TeamInvite />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
           </main>

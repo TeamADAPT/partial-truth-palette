@@ -1,4 +1,4 @@
-import { Brain, Home, Briefcase, BarChart3, Users, Settings, Plus, Palette, FileText, Megaphone, TrendingUp, Calendar, BookOpen, Lightbulb, CreditCard } from "lucide-react";
+import { Brain, Home, Briefcase, BarChart3, Users, Settings, Plus, Palette, FileText, Megaphone, TrendingUp, Calendar, BookOpen, Lightbulb, CreditCard, Bot, Target } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -33,6 +33,13 @@ const toolsItems = [
   { path: "/brainstorming", label: "Brainstorming", icon: Lightbulb },
   { path: "/personalization", label: "Personalization", icon: Settings },
   { path: "/plans", label: "Plans", icon: CreditCard },
+];
+
+const aiToolsItems = [
+  { path: "/ai-agent", label: "AI Agent Dashboard", icon: Bot },
+  { path: "/competitive-analysis", label: "Competitive Analysis", icon: Target },
+  { path: "/financial-projections", label: "Financial Projections", icon: TrendingUp },
+  { path: "/team-invite", label: "Team Invitations", icon: Users },
 ];
 
 interface AppSidebarProps {
@@ -102,6 +109,37 @@ export function AppSidebar({ onNewTask }: AppSidebarProps) {
           <SidebarGroupContent>
             <SidebarMenu>
               {toolsItems.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.path);
+                return (
+                  <SidebarMenuItem key={item.path}>
+                    <SidebarMenuButton asChild>
+                      <NavLink
+                        to={item.path}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
+                          active
+                            ? "bg-primary/10 text-primary border border-primary/20"
+                            : "text-muted-foreground hover:bg-primary/5 hover:text-foreground"
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" />
+                        {!collapsed && <span className="font-medium">{item.label}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-muted-foreground/70">
+            {!collapsed ? "AI Tools" : "AI"}
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {aiToolsItems.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
                 return (
