@@ -24,6 +24,11 @@ import AIAgent from "./pages/AIAgent";
 import CompetitiveAnalysis from "./pages/CompetitiveAnalysis";
 import FinancialProjections from "./pages/FinancialProjections";
 import TeamInvite from "./pages/TeamInvite";
+import LegalCompliance from "./pages/LegalCompliance";
+import HelpSupport from "./pages/HelpSupport";
+import Academy from "./pages/Academy";
+import DataImport from "./pages/DataImport";
+import ArchivedProjects from "./pages/ArchivedProjects";
 import NotFound from "./pages/NotFound";
 import { useState } from "react";
 
@@ -64,6 +69,11 @@ const AppLayout = () => {
                 <Route path="/competitive-analysis" element={<CompetitiveAnalysis />} />
                 <Route path="/financial-projections" element={<FinancialProjections />} />
                 <Route path="/team-invite" element={<TeamInvite />} />
+                <Route path="/legal-compliance" element={<LegalCompliance />} />
+                <Route path="/help-support" element={<HelpSupport />} />
+                <Route path="/academy" element={<Academy />} />
+                <Route path="/data-import" element={<DataImport />} />
+                <Route path="/archived-projects" element={<ArchivedProjects />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
           </main>
