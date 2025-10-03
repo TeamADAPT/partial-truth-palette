@@ -1,4 +1,4 @@
-import { Brain, Home, Briefcase, BarChart3, Users, Settings, Plus, Palette, FileText, Megaphone, TrendingUp, Calendar, BookOpen, Lightbulb, CreditCard, Bot, Target, Scale, HelpCircle, GraduationCap, Upload, Archive } from "lucide-react";
+import { Brain, Home, Briefcase, BarChart3, Users, Settings, Plus, Palette, FileText, Megaphone, TrendingUp, Calendar, BookOpen, Lightbulb, CreditCard, Bot, Target, Scale, HelpCircle, GraduationCap, Upload, Archive, User, Bell, Activity as ActivityIcon, Plug, Search as SearchIcon } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -48,6 +48,19 @@ const resourcesItems = [
   { path: "/academy", label: "Academy", icon: GraduationCap },
   { path: "/data-import", label: "Data Import", icon: Upload },
   { path: "/archived-projects", label: "Archived Projects", icon: Archive },
+];
+
+const businessToolsItems = [
+  { path: "/reports", label: "Reports", icon: BarChart3 },
+  { path: "/business-plan", label: "Business Plan", icon: FileText },
+  { path: "/market-research", label: "Market Research", icon: SearchIcon },
+  { path: "/integrations", label: "Integrations", icon: Plug },
+];
+
+const accountItems = [
+  { path: "/profile", label: "Profile", icon: User },
+  { path: "/notifications", label: "Notifications", icon: Bell },
+  { path: "/activity", label: "Activity Feed", icon: ActivityIcon },
 ];
 
 interface AppSidebarProps {
@@ -179,6 +192,68 @@ export function AppSidebar({ onNewTask }: AppSidebarProps) {
           <SidebarGroupContent>
             <SidebarMenu>
               {resourcesItems.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.path);
+                return (
+                  <SidebarMenuItem key={item.path}>
+                    <SidebarMenuButton asChild>
+                      <NavLink
+                        to={item.path}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
+                          active
+                            ? "bg-primary/10 text-primary border border-primary/20"
+                            : "text-muted-foreground hover:bg-primary/5 hover:text-foreground"
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" />
+                        {!collapsed && <span className="font-medium">{item.label}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-muted-foreground/70">
+            {!collapsed ? "Business Tools" : "Biz"}
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {businessToolsItems.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.path);
+                return (
+                  <SidebarMenuItem key={item.path}>
+                    <SidebarMenuButton asChild>
+                      <NavLink
+                        to={item.path}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
+                          active
+                            ? "bg-primary/10 text-primary border border-primary/20"
+                            : "text-muted-foreground hover:bg-primary/5 hover:text-foreground"
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" />
+                        {!collapsed && <span className="font-medium">{item.label}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-muted-foreground/70">
+            {!collapsed ? "Account" : "Acc"}
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {accountItems.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
                 return (

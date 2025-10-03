@@ -29,6 +29,12 @@ import HelpSupport from "./pages/HelpSupport";
 import Academy from "./pages/Academy";
 import DataImport from "./pages/DataImport";
 import ArchivedProjects from "./pages/ArchivedProjects";
+import Profile from "./pages/Profile";
+import Notifications from "./pages/Notifications";
+import Reports from "./pages/Reports";
+import BusinessPlan from "./pages/BusinessPlan";
+import Integrations from "./pages/Integrations";
+import ActivityFeed from "./pages/ActivityFeed";
 import NotFound from "./pages/NotFound";
 import { useState } from "react";
 
@@ -74,6 +80,12 @@ const AppLayout = () => {
                 <Route path="/academy" element={<Academy />} />
                 <Route path="/data-import" element={<DataImport />} />
                 <Route path="/archived-projects" element={<ArchivedProjects />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/notifications" element={<Notifications />} />
+                <Route path="/reports" element={<Reports />} />
+                <Route path="/business-plan" element={<BusinessPlan />} />
+                <Route path="/integrations" element={<Integrations />} />
+                <Route path="/activity" element={<ActivityFeed />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
           </main>
