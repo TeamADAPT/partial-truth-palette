@@ -9,6 +9,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { TaskDelegationModal } from "@/components/TaskDelegationModal";
 import Index from "./pages/Index";
 import Projects from "./pages/Projects";
+import ProjectDetail from "./pages/ProjectDetail";
 import Analytics from "./pages/Analytics";
 import Teams from "./pages/Teams";
 import BrandIdentity from "./pages/BrandIdentity";
@@ -60,6 +61,7 @@ const AppLayout = () => {
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/projects" element={<Projects />} />
+                <Route path="/projects/:id" element={<ProjectDetail />} />
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/teams" element={<Teams />} />
                 <Route path="/brand-identity" element={<BrandIdentity />} />

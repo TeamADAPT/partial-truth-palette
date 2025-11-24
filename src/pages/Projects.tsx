@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { 
   Search, 
   Filter, 
@@ -21,6 +23,8 @@ import {
   Edit
 } from "lucide-react";
 import { format } from "date-fns";
+import { Link } from "react-router-dom";
+import { NewProjectForm } from "@/components/forms/NewProjectForm";
 
 interface Project {
   id: string;
@@ -131,10 +135,7 @@ const Projects = () => {
               Manage and track all your business projects from inception to delivery
             </p>
           </div>
-          <Button className="bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 shadow-primary transition-all duration-300 hover:shadow-glow">
-            <Plus className="h-4 w-4 mr-2" />
-            New Project
-          </Button>
+          <NewProjectForm />
         </div>
 
         {/* Filters */}
@@ -182,77 +183,79 @@ const Projects = () => {
           </CardContent>
         </Card>
 
-        {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProjects.map((project, index) => (
-            <Card 
-              key={project.id} 
-              className="tech-card hover:shadow-glow transition-all duration-300 hover:-translate-y-1 cursor-pointer animate-float"
-              style={{ 
-                animationDelay: `${index * 100}ms`,
-                animationDuration: `${5 + index * 0.3}s`
-              }}
-            >
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="space-y-2">
-                    <CardTitle className="text-lg">{project.name}</CardTitle>
+        {/* Projects Table */}
+        <Card className="bg-card/50 border-border/50 backdrop-blur-sm">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Project Name</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Progress</TableHead>
+                <TableHead>Due Date</TableHead>
+                <TableHead>Team</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredProjects.map((project) => (
+                <TableRow key={project.id}>
+                  <TableCell>
+                    <div className="font-medium">{project.name}</div>
+                    <div className="text-sm text-muted-foreground">{project.category}</div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge className={getStatusColor(project.status)}>
+                      {getStatusIcon(project.status)}
+                      <span className="ml-1 capitalize">{project.status}</span>
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
                     <div className="flex items-center gap-2">
-                      <Badge className={getStatusColor(project.status)}>
-                        {getStatusIcon(project.status)}
-                        <span className="ml-1 capitalize">{project.status}</span>
-                      </Badge>
-                      <Badge variant="outline" className={getPriorityColor(project.priority)}>
-                        {project.priority}
-                      </Badge>
+                      <Progress value={project.progress} className="h-2 w-24" />
+                      <span className="text-sm text-muted-foreground">{project.progress}%</span>
                     </div>
-                  </div>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardHeader>
-              
-              <CardContent className="space-y-4">
-                <CardDescription className="line-clamp-2">
-                  {project.description}
-                </CardDescription>
-
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Progress</span>
-                    <span className="font-medium">{project.progress}%</span>
-                  </div>
-                  <Progress value={project.progress} className="h-2" />
-                </div>
-
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
-                    Due: {format(project.dueDate, "MMM dd, yyyy")}
-                  </div>
-                  
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Users className="h-4 w-4" />
-                    {project.team.slice(0, 2).join(", ")}
-                    {project.team.length > 2 && ` +${project.team.length - 2} more`}
-                  </div>
-                </div>
-
-                <div className="flex gap-2 pt-2">
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <Eye className="h-4 w-4 mr-1" />
-                    View
-                  </Button>
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <Edit className="h-4 w-4 mr-1" />
-                    Edit
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                  </TableCell>
+                  <TableCell>{format(project.dueDate, "MMM dd, yyyy")}</TableCell>
+                  <TableCell>
+                    <div className="flex -space-x-2">
+                      {project.team.slice(0, 3).map((member, i) => (
+                        <div key={i} className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-xs border-2 border-background">
+                          {member.charAt(0)}
+                        </div>
+                      ))}
+                      {project.team.length > 3 && (
+                        <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-xs border-2 border-background">
+                          +{project.team.length - 3}
+                        </div>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <Link to={`/projects/${project.id}`}>
+                          <DropdownMenuItem>
+                            <Eye className="h-4 w-4 mr-2" />
+                            View
+                          </DropdownMenuItem>
+                        </Link>
+                        <DropdownMenuItem>
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
 
         {filteredProjects.length === 0 && (
           <Card className="bg-card/50 border-border/50 backdrop-blur-sm">
