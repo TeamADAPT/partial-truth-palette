@@ -25,6 +25,35 @@ npm run dev
 - **Styling**: Tailwind CSS with semantic tokens only
 - **State**: TanStack Query for server state, Zustand for client state
 
+## 👥 Team Roles and Responsibilities
+
+Based on the project roadmap, the following roles are recommended to ensure clear ownership:
+
+-   **Team Lead (One per team: Frontend, Backend, AI):**
+    *   Facilitates sprint planning and daily stand-ups.
+    *   Removes blockers for the team.
+    *   Provides final technical approval for major changes.
+    *   Mentors other team members.
+
+-   **Senior Developer (Frontend, Backend, AI):**
+    *   Designs the technical architecture for their domain.
+    *   Tackles the most complex technical challenges.
+    *   Leads code reviews and enforces code quality standards.
+
+-   **Developer (Frontend, Backend, AI):**
+    *   Implements features based on the defined tasks and architecture.
+    *   Writes unit and integration tests for their code.
+    *   Participates in code reviews.
+
+-   **QA Engineer (Recommended):**
+    *   Develops and maintains the overall testing strategy.
+    *   Writes and manages automated end-to-end tests.
+    *   Performs manual testing for critical user flows before releases.
+
+-   **DevOps Engineer (Recommended as project scales):**
+    *   Manages the CI/CD pipeline.
+    *   Manages cloud infrastructure and ensures application scalability and reliability.
+
 ## 📝 Component Creation Guidelines
 
 ### **Creating New Components**
@@ -168,6 +197,30 @@ docs(readme): update installation instructions
 4. Create PR with template
 5. Request review from team lead
 6. Address feedback and merge
+
+## 💬 Communication Best Practices
+
+Effective communication is crucial for parallel development. The following practices are recommended to ensure alignment and collaboration between teams.
+
+### **Structured Check-ins**
+*   **Daily Stand-ups:** As outlined in the `DEVELOPMENT_ROADMAP.md`, daily stand-ups are mandatory for all teams to discuss progress and blockers.
+
+### **Clear and Actionable Documentation**
+*   **API Contracts:** Before implementation, the backend team must define and share API contracts with the frontend team.
+*   **Well-documented Code:** Code should be clear, and complex logic should be commented. Reusable components should have documentation explaining their props and usage.
+*   **Request for Comments (RFCs):** For significant architectural or design decisions, a formal RFC should be created in the `/docs/rfc` directory. The proposal is then discussed and approved via a pull request.
+
+### **Effective Use of Development Tools**
+*   **Descriptive Pull Requests (PRs):** PR descriptions should clearly explain the "what" and "why" of the change and link to the relevant task.
+*   **Constructive Code Reviews:** Code reviews should be a collaborative process to share knowledge and improve code quality.
+
+### **Leveraging Communication Channels**
+*   **Dedicated Channels:** Use the dedicated Slack channels for team-specific discussions.
+*   **Text vs. Call:** If a text-based discussion becomes too complex, switch to a quick video call.
+
+### **Collaborative Practices**
+*   **Pair Programming:** Use pair programming for complex tasks or to unblock a team member.
+*   **Regular Integration Meetings:** Hold a short weekly or bi-weekly meeting to discuss integration points between teams.
 
 ## 🧪 Testing Strategy
 
