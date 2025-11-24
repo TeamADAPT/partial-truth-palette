@@ -5,6 +5,7 @@ import { IdeaCard } from "@/components/IdeaCard";
 import { StatsCard } from "@/components/StatsCard";
 import { RevenueChart } from "@/components/charts/RevenueChart";
 import { TasksChart } from "@/components/charts/TasksChart";
+import { ProjectStatusChart } from "@/components/charts/ProjectStatusChart";
 import { 
   TrendingUp, 
   Users, 
@@ -114,7 +115,7 @@ const Index = () => {
         </div>
 
         {/* Analytics Overview */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <Card className="bg-card/50 border-border/50 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="text-foreground flex items-center gap-2">
@@ -145,6 +146,23 @@ const Index = () => {
             <CardContent>
               <div className="h-64">
                 <TasksChart />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card/50 border-border/50 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="text-foreground flex items-center gap-2">
+                <Briefcase className="h-5 w-5 text-chart-2" />
+                Project Status
+              </CardTitle>
+              <CardDescription className="text-muted-foreground">
+                Current status of all active projects
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64">
+                <ProjectStatusChart />
               </div>
             </CardContent>
           </Card>
