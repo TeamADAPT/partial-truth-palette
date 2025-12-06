@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useAppStore } from "@/lib/store";
 
 const navItems = [
   { path: "/", label: "Dashboard", icon: Home },
@@ -74,6 +75,7 @@ interface AppSidebarProps {
 export function AppSidebar({ onNewTask }: AppSidebarProps) {
   const { state } = useSidebar();
   const location = useLocation();
+  const { userProfile } = useAppStore();
   const collapsed = state === "collapsed";
 
   const isActive = (path: string) => location.pathname === path;
@@ -89,7 +91,7 @@ export function AppSidebar({ onNewTask }: AppSidebarProps) {
           {!collapsed && (
             <div>
               <h1 className="text-xl font-bold gradient-text">MybizAI</h1>
-              <p className="text-xs text-muted-foreground">Autonomous Business</p>
+              <p className="text-xs text-muted-foreground">Hello, {userProfile.name.split(' ')[0]}</p>
             </div>
           )}
         </div>

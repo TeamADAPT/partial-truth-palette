@@ -9,6 +9,8 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { VoiceCommandOverlay } from "@/components/VoiceCommandOverlay";
+import { CommandMenu } from "@/components/CommandMenu";
+import { PageTransition } from "@/components/PageTransition";
 
 export const DashboardLayout = () => {
   const [isDelegationModalOpen, setIsDelegationModalOpen] = useState(false);
@@ -49,8 +51,10 @@ export const DashboardLayout = () => {
             </div>
           </header>
 
-          <main className="flex-1 overflow-auto p-4 md:p-6 fade-in">
-            <Outlet />
+          <main className="flex-1 overflow-auto p-4 md:p-6">
+            <PageTransition>
+              <Outlet />
+            </PageTransition>
           </main>
         </div>
 
@@ -59,6 +63,7 @@ export const DashboardLayout = () => {
           onOpenChange={setIsDelegationModalOpen}
         />
         <VoiceCommandOverlay />
+        <CommandMenu />
         <Toaster />
         <Sonner />
       </div>

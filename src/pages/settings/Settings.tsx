@@ -9,16 +9,29 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Bell, CreditCard, Globe, Lock, User, Shield, Plug } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useAppStore } from "@/lib/store";
 
 export default function SettingsPage() {
+  const { userProfile, updateUserProfile } = useAppStore();
   const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: userProfile.name,
+    email: userProfile.email,
+    bio: userProfile.bio
+  });
 
   const handleSave = () => {
     setLoading(true);
+    // Simulate API call
     setTimeout(() => {
+      updateUserProfile({
+        name: formData.name,
+        email: formData.email,
+        bio: formData.bio
+      });
       setLoading(false);
       toast.success("Settings saved successfully");
-    }, 1000);
+    }, 800);
   };
 
   return (
@@ -57,31 +70,38 @@ export default function SettingsPage() {
               <CardContent className="space-y-6">
                 <div className="flex items-center gap-6">
                   <Avatar className="h-20 w-20">
-                    <AvatarImage src="https://github.com/shadcn.png" />
-                    <AvatarFallback>JD</AvatarFallback>
+                    <AvatarImage src={userProfile.avatar} />
+                    <AvatarFallback>{userProfile.name.split(' ').map(n=>n[0]).join('')}</AvatarFallback>
                   </Avatar>
                   <Button variant="outline">Change Avatar</Button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="firstName">First name</Label>
-                    <Input id="firstName" defaultValue="John" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="lastName">Last name</Label>
-                    <Input id="lastName" defaultValue="Doe" />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full Name</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" defaultValue="john.doe@example.com" />
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="bio">Bio</Label>
-                  <Input id="bio" defaultValue="Product Manager at Tech Corp" />
+                  <Input
+                    id="bio"
+                    value={formData.bio}
+                    onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                  />
                 </div>
               </CardContent>
               <CardFooter>

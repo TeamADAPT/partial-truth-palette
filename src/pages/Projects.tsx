@@ -23,72 +23,61 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { ProjectHistoryModal } from "@/components/modals/ProjectHistoryModal";
-
-interface Project {
-  id: string;
-  name: string;
-  description: string;
-  status: "planning" | "active" | "paused" | "completed" | "cancelled";
-  progress: number;
-  dueDate: Date;
-  team: string[];
-  category: string;
-  priority: "low" | "medium" | "high";
-  createdDate: Date;
-}
-
-const mockProjects: Project[] = [
-  {
-    id: "1",
-    name: "AI-Powered E-commerce Platform",
-    description: "Complete marketplace solution with intelligent product recommendations",
-    status: "active",
-    progress: 75,
-    dueDate: new Date("2024-02-15"),
-    team: ["Sarah Johnson", "Mike Chen", "AI Assistant"],
-    category: "Development",
-    priority: "high",
-    createdDate: new Date("2024-01-01")
-  },
-  {
-    id: "2",
-    name: "Sustainable Food Delivery Service",
-    description: "Carbon-neutral delivery platform with local restaurant partnerships",
-    status: "planning",
-    progress: 25,
-    dueDate: new Date("2024-03-20"),
-    team: ["Emily Davis", "Research AI"],
-    category: "Business Planning",
-    priority: "medium",
-    createdDate: new Date("2024-01-10")
-  },
-  {
-    id: "3",
-    name: "Smart Home IoT Hub",
-    description: "Unified control system for all smart home devices",
-    status: "completed",
-    progress: 100,
-    dueDate: new Date("2024-01-30"),
-    team: ["Hardware Team", "IoT AI"],
-    category: "Development",
-    priority: "high",
-    createdDate: new Date("2023-12-01")
-  }
-];
+import { useAppStore, Project } from "@/lib/store";
+import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { ProjectSkeleton } from "@/components/skeletons/ProjectSkeleton";
+import { useEffect } from "react";
 
 const Projects = () => {
-  const [projects] = useState(mockProjects);
+  const { projects, addProject } = useAppStore();
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+
+  useEffect(() => {
+    // Simulate data fetching
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   // History Modal State
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | undefined>();
 
+  // Form State
+  const [newProject, setNewProject] = useState({
+    name: "",
+    description: "",
+    category: "Development",
+    priority: "medium" as "low" | "medium" | "high"
+  });
+
   const openHistory = (project: Project) => {
     setSelectedProject(project);
     setHistoryModalOpen(true);
+  };
+
+  const handleCreateProject = () => {
+    if (!newProject.name) return;
+
+    addProject({
+      name: newProject.name,
+      description: newProject.description,
+      status: "planning",
+      progress: 0,
+      dueDate: new Date(new Date().setMonth(new Date().getMonth() + 1)), // Default 1 month out
+      team: [],
+      category: newProject.category,
+      priority: newProject.priority,
+    });
+
+    setIsAddDialogOpen(false);
+    setNewProject({ name: "", description: "", category: "Development", priority: "medium" });
+    toast.success("Project created successfully!");
   };
 
   const filteredProjects = projects.filter(project => {
@@ -142,10 +131,75 @@ const Projects = () => {
               Manage and track all your business projects from inception to delivery
             </p>
           </div>
-          <Button className="bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 shadow-primary transition-all duration-300 hover:shadow-glow">
-            <Plus className="h-4 w-4 mr-2" />
-            New Project
-          </Button>
+          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 shadow-primary transition-all duration-300 hover:shadow-glow">
+                <Plus className="h-4 w-4 mr-2" />
+                New Project
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Create New Project</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Project Name</Label>
+                  <Input
+                    id="name"
+                    value={newProject.name}
+                    onChange={(e) => setNewProject({...newProject, name: e.target.value})}
+                    placeholder="e.g. AI Marketing Campaign"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="desc">Description</Label>
+                  <Input
+                    id="desc"
+                    value={newProject.description}
+                    onChange={(e) => setNewProject({...newProject, description: e.target.value})}
+                    placeholder="Brief description of the project"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Category</Label>
+                    <Select
+                      value={newProject.category}
+                      onValueChange={(val) => setNewProject({...newProject, category: val})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Development">Development</SelectItem>
+                        <SelectItem value="Business Planning">Business Planning</SelectItem>
+                        <SelectItem value="Marketing">Marketing</SelectItem>
+                        <SelectItem value="Research">Research</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Priority</Label>
+                    <Select
+                      value={newProject.priority}
+                      onValueChange={(val: "low" | "medium" | "high") => setNewProject({...newProject, priority: val})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="low">Low</SelectItem>
+                        <SelectItem value="medium">Medium</SelectItem>
+                        <SelectItem value="high">High</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <Button className="w-full mt-4" onClick={handleCreateProject}>Create Project</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
 
         {/* Filters */}
@@ -194,6 +248,9 @@ const Projects = () => {
         </Card>
 
         {/* Projects Grid */}
+        {isLoading ? (
+          <ProjectSkeleton />
+        ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProjects.map((project, index) => (
             <Card 
@@ -269,6 +326,7 @@ const Projects = () => {
             </Card>
           ))}
         </div>
+        )}
 
         <ProjectHistoryModal
           open={historyModalOpen}

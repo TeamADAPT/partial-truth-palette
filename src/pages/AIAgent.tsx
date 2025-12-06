@@ -1,264 +1,169 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Lightbulb, Users, BarChart3, TrendingUp, Plus, HourglassIcon, CheckCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Bot, Send, User, Sparkles } from "lucide-react";
+
+interface Message {
+  id: string;
+  role: "user" | "ai";
+  content: string;
+  timestamp: Date;
+}
 
 export default function AIAgent() {
-  const activeIdeas = [
+  const [messages, setMessages] = useState<Message[]>([
     {
-      name: "Eco-Friendly Packaging Solutions",
-      stage: "Development",
-      team: "Team Alpha",
-      progress: 75,
-      lastUpdated: "2024-07-26"
-    },
-    {
-      name: "AI-Powered Personal Finance App", 
-      stage: "Planning",
-      team: "Team Beta",
-      progress: 40,
-      lastUpdated: "2024-07-25"
-    },
-    {
-      name: "Sustainable Energy Consulting",
-      stage: "Concept", 
-      team: "Team Gamma",
-      progress: 20,
-      lastUpdated: "2024-07-24"
+      id: "1",
+      role: "ai",
+      content: "Hello! I'm your AI Business Assistant. How can I help you optimize your operations today?",
+      timestamp: new Date()
     }
-  ];
+  ]);
+  const [inputValue, setInputValue] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  const reviewIdeas = [
-    {
-      name: "Drone-based Delivery Service",
-      stage: "Evaluation",
-      submittedBy: "Alex Chen",
-      status: "Pending",
-      submittedOn: "2024-07-27"
-    },
-    {
-      name: "Gamified Language Learning Platform",
-      stage: "Evaluation", 
-      submittedBy: "Maria Garcia",
-      status: "Approved",
-      submittedOn: "2024-07-26"
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  ];
+  }, [messages, isTyping]);
 
-  const recentActivity = [
-    {
-      type: "add",
-      message: 'New idea "Quantum Computing for Pharma" submitted.',
-      author: "David Kim",
-      time: "2 hours ago",
-      color: "text-green-400"
-    },
-    {
-      type: "chart",
-      message: 'Progress on "AI-Powered Personal Finance App" updated to 45%.',
-      author: "Team Beta", 
-      time: "5 hours ago",
-      color: "text-blue-400"
-    },
-    {
-      type: "user",
-      message: "Sarah Jones joined Team Alpha.",
-      author: "Project Admin",
-      time: "1 day ago",
-      color: "text-purple-400"
-    }
-  ];
+  const handleSendMessage = () => {
+    if (!inputValue.trim()) return;
 
-  const getStageVariant = (stage: string) => {
-    switch (stage) {
-      case "Development": return "default";
-      case "Planning": return "secondary"; 
-      case "Concept": return "outline";
-      case "Evaluation": return "secondary";
-      default: return "outline";
-    }
+    const newUserMessage: Message = {
+      id: Date.now().toString(),
+      role: "user",
+      content: inputValue,
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, newUserMessage]);
+    setInputValue("");
+    setIsTyping(true);
+
+    // Simulate AI thinking and response
+    setTimeout(() => {
+      const responses = [
+        "I've analyzed the market trends and suggest focusing on Q3 growth strategies.",
+        "That's a great idea! I can draft a preliminary plan for that.",
+        "Based on your current project velocity, we might need to adjust the timeline.",
+        "I've updated the team's task list accordingly.",
+        "Here's a summary of the competitive landscape for that sector."
+      ];
+      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+
+      const newAiMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "ai",
+        content: randomResponse,
+        timestamp: new Date()
+      };
+
+      setMessages(prev => [...prev, newAiMessage]);
+      setIsTyping(false);
+    }, 1500);
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-4xl font-bold gradient-text">AI Agent Dashboard</h1>
-          <p className="text-muted-foreground mt-2">
-            Overview of your business ideas and progress
-          </p>
-        </div>
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          New Idea
-        </Button>
+    <div className="flex flex-col h-[calc(100vh-6rem)] max-w-5xl mx-auto p-4 md:p-6">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold flex items-center gap-2">
+          <Bot className="h-8 w-8 text-primary" />
+          AI Agent Dashboard
+        </h1>
+        <p className="text-muted-foreground mt-1">Interact with your autonomous business agents.</p>
       </div>
 
-      {/* Active Ideas */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Lightbulb className="h-5 w-5" />
-            Active Ideas
+      <Card className="flex-1 flex flex-col overflow-hidden border-primary/20 shadow-lg bg-card/50 backdrop-blur-sm">
+        <CardHeader className="border-b bg-muted/30">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-yellow-500" />
+            Strategic Advisor Agent
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">Idea Name</th>
-                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">Stage</th>
-                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">Team</th>
-                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">Progress</th>
-                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">Last Updated</th>
-                </tr>
-              </thead>
-              <tbody>
-                {activeIdeas.map((idea, index) => (
-                  <tr key={index} className="border-b hover:bg-muted/50">
-                    <td className="py-4 px-4 font-medium">{idea.name}</td>
-                    <td className="py-4 px-4">
-                      <Badge variant={getStageVariant(idea.stage)}>
-                        {idea.stage}
-                      </Badge>
-                    </td>
-                    <td className="py-4 px-4 text-muted-foreground">{idea.team}</td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-3">
-                        <Progress value={idea.progress} className="w-24" />
-                        <span className="text-sm font-medium">{idea.progress}%</span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4 text-muted-foreground">{idea.lastUpdated}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Ideas in Review */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <HourglassIcon className="h-5 w-5" />
-            Ideas in Review
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">Idea Name</th>
-                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">Stage</th>
-                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">Submitted By</th>
-                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">Status</th>
-                  <th className="text-left py-3 px-4 font-medium text-muted-foreground">Submitted On</th>
-                </tr>
-              </thead>
-              <tbody>
-                {reviewIdeas.map((idea, index) => (
-                  <tr key={index} className="border-b hover:bg-muted/50">
-                    <td className="py-4 px-4 font-medium">{idea.name}</td>
-                    <td className="py-4 px-4">
-                      <Badge variant="secondary">{idea.stage}</Badge>
-                    </td>
-                    <td className="py-4 px-4 text-muted-foreground">{idea.submittedBy}</td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-2">
-                        {idea.status === "Pending" ? (
-                          <>
-                            <HourglassIcon className="h-4 w-4 text-amber-500" />
-                            <span className="text-amber-500">{idea.status}</span>
-                          </>
-                        ) : (
-                          <>
-                            <CheckCircle className="h-4 w-4 text-green-500" />
-                            <span className="text-green-500">{idea.status}</span>
-                          </>
-                        )}
-                      </div>
-                    </td>
-                    <td className="py-4 px-4 text-muted-foreground">{idea.submittedOn}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Team Performance */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              Team Performance
-            </CardTitle>
-            <CardDescription>Last 30 Days</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2 mb-4">
-              <TrendingUp className="h-4 w-4 text-green-500" />
-              <span className="text-sm font-semibold text-green-500">+10%</span>
-            </div>
-            <div className="flex items-end justify-between h-32 gap-4">
-              <div className="flex flex-col items-center gap-2 flex-1">
-                <div className="w-full bg-muted rounded-md h-12 flex items-end">
-                  <div className="w-full bg-gradient-to-t from-primary to-blue-400 rounded-md h-3/4"></div>
-                </div>
-                <span className="text-xs font-medium text-muted-foreground">Team Alpha</span>
-              </div>
-              <div className="flex flex-col items-center gap-2 flex-1">
-                <div className="w-full bg-muted rounded-md h-12 flex items-end">
-                  <div className="w-full bg-gradient-to-t from-primary to-blue-400 rounded-md h-full"></div>
-                </div>
-                <span className="text-xs font-medium text-muted-foreground">Team Beta</span>
-              </div>
-              <div className="flex flex-col items-center gap-2 flex-1">
-                <div className="w-full bg-muted rounded-md h-12 flex items-end">
-                  <div className="w-full bg-gradient-to-t from-primary to-blue-400 rounded-md h-5/6"></div>
-                </div>
-                <span className="text-xs font-medium text-muted-foreground">Team Gamma</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Recent Activity */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5" />
-              Recent Activity
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+        <CardContent className="flex-1 overflow-hidden p-0">
+          <ScrollArea className="h-full p-4">
             <div className="space-y-4">
-              {recentActivity.map((activity, index) => (
-                <div key={index} className="flex items-start gap-4">
-                  <div className={`p-2 rounded-full ${activity.color} bg-current/10`}>
-                    {activity.type === "add" && <Plus className="h-4 w-4" />}
-                    {activity.type === "chart" && <BarChart3 className="h-4 w-4" />}
-                    {activity.type === "user" && <Users className="h-4 w-4" />}
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">{activity.message}</p>
-                    <p className="text-xs text-muted-foreground">
-                      by {activity.author} - {activity.time}
-                    </p>
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex items-start gap-3 ${
+                    message.role === "user" ? "flex-row-reverse" : ""
+                  }`}
+                >
+                  <Avatar className="h-8 w-8 mt-1">
+                    {message.role === "ai" ? (
+                      <>
+                        <AvatarImage src="/bot-avatar.png" />
+                        <AvatarFallback className="bg-primary text-primary-foreground">AI</AvatarFallback>
+                      </>
+                    ) : (
+                      <>
+                        <AvatarImage src="https://github.com/shadcn.png" />
+                        <AvatarFallback>ME</AvatarFallback>
+                      </>
+                    )}
+                  </Avatar>
+                  <div
+                    className={`rounded-lg p-3 max-w-[80%] ${
+                      message.role === "user"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted"
+                    }`}
+                  >
+                    <p className="text-sm leading-relaxed">{message.content}</p>
+                    <span className="text-[10px] opacity-70 mt-1 block">
+                      {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
                   </div>
                 </div>
               ))}
+
+              {isTyping && (
+                <div className="flex items-start gap-3">
+                  <Avatar className="h-8 w-8 mt-1">
+                    <AvatarFallback className="bg-primary text-primary-foreground">AI</AvatarFallback>
+                  </Avatar>
+                  <div className="bg-muted rounded-lg p-3">
+                    <div className="flex gap-1">
+                      <div className="h-2 w-2 bg-foreground/30 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                      <div className="h-2 w-2 bg-foreground/30 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                      <div className="h-2 w-2 bg-foreground/30 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div ref={scrollRef} />
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </ScrollArea>
+        </CardContent>
+
+        <CardFooter className="p-4 border-t bg-background/50">
+          <form
+            className="flex w-full gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSendMessage();
+            }}
+          >
+            <Input
+              placeholder="Ask me anything about your business..."
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              className="flex-1 bg-background"
+            />
+            <Button type="submit" size="icon" disabled={!inputValue.trim() || isTyping}>
+              <Send className="h-4 w-4" />
+            </Button>
+          </form>
+        </CardFooter>
+      </Card>
     </div>
   );
 }

@@ -24,89 +24,10 @@ import {
   Key
 } from "lucide-react";
 import { toast } from "sonner";
-
-interface TeamMember {
-  id: string;
-  name: string;
-  role: string;
-  email: string;
-  avatar?: string;
-  status: "active" | "away" | "busy" | "offline";
-  type: "human" | "ai";
-  specialty?: string;
-  efficiency: number;
-  tasksCompleted: number;
-  currentProjects: string[];
-  joinDate: Date;
-}
-
-const mockTeamMembers: TeamMember[] = [
-  {
-    id: "1",
-    name: "Sarah Johnson",
-    role: "Project Manager",
-    email: "sarah@mybizai.com",
-    status: "active",
-    type: "human",
-    efficiency: 95,
-    tasksCompleted: 127,
-    currentProjects: ["E-commerce Platform", "Mobile App"],
-    joinDate: new Date("2023-06-15")
-  },
-  {
-    id: "2", 
-    name: "Mike Chen",
-    role: "Senior Developer",
-    email: "mike@mybizai.com",
-    status: "busy",
-    type: "human", 
-    efficiency: 92,
-    tasksCompleted: 143,
-    currentProjects: ["E-commerce Platform", "IoT Hub"],
-    joinDate: new Date("2023-04-20")
-  },
-  {
-    id: "3",
-    name: "Research Assistant AI",
-    role: "Market Analyst",
-    email: "research@ai.mybizai.com",
-    status: "active",
-    type: "ai",
-    specialty: "Market Analysis & Research",
-    efficiency: 99,
-    tasksCompleted: 1247,
-    currentProjects: ["Food Delivery", "FinTech Analysis"],
-    joinDate: new Date("2023-01-01")
-  },
-  {
-    id: "4",
-    name: "Emily Davis",
-    role: "UX Designer", 
-    email: "emily@mybizai.com",
-    status: "away",
-    type: "human",
-    efficiency: 88,
-    tasksCompleted: 95,
-    currentProjects: ["Mobile App", "Dashboard Redesign"],
-    joinDate: new Date("2023-08-10")
-  },
-  {
-    id: "5",
-    name: "Content Creator AI",
-    role: "Marketing Specialist",
-    email: "content@ai.mybizai.com",
-    status: "active",
-    type: "ai",
-    specialty: "Content Creation & Marketing",
-    efficiency: 97,
-    tasksCompleted: 892,
-    currentProjects: ["Brand Campaign", "Social Media"],
-    joinDate: new Date("2023-02-15")
-  }
-];
+import { useAppStore } from "@/lib/store";
 
 const Teams = () => {
-  const [teamMembers] = useState(mockTeamMembers);
+  const { teamMembers } = useAppStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
