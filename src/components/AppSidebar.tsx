@@ -1,4 +1,4 @@
-import { Brain, Home, Briefcase, BarChart3, Users, Settings, Plus, Palette, FileText, Megaphone, TrendingUp, Calendar, BookOpen, Lightbulb, CreditCard, Bot, Target, Scale, HelpCircle, GraduationCap, Upload, Archive, User, Bell, Activity as ActivityIcon, Plug, Search as SearchIcon } from "lucide-react";
+import { Brain, Home, Briefcase, BarChart3, Users, Settings, Plus, Palette, FileText, Megaphone, TrendingUp, Calendar, BookOpen, Lightbulb, CreditCard, Bot, Target, Scale, HelpCircle, GraduationCap, Upload, Archive, User, Bell, Activity as ActivityIcon, Plug, Search as SearchIcon, MessageSquare, Library, Gift } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -33,6 +33,9 @@ const toolsItems = [
   { path: "/brainstorming", label: "Brainstorming", icon: Lightbulb },
   { path: "/personalization", label: "Personalization", icon: Settings },
   { path: "/plans", label: "Plans", icon: CreditCard },
+  { path: "/community", label: "Community", icon: MessageSquare },
+  { path: "/resources", label: "Resources", icon: Library },
+  { path: "/referral", label: "Referral Program", icon: Gift },
 ];
 
 const aiToolsItems = [
@@ -61,6 +64,7 @@ const accountItems = [
   { path: "/profile", label: "Profile", icon: User },
   { path: "/notifications", label: "Notifications", icon: Bell },
   { path: "/activity", label: "Activity Feed", icon: ActivityIcon },
+  { path: "/settings", label: "Settings", icon: Settings },
 ];
 
 interface AppSidebarProps {
@@ -306,8 +310,11 @@ export function AppSidebar({ onNewTask }: AppSidebarProps) {
             variant="outline" 
             size="icon" 
             className="bg-background/80 backdrop-blur-sm border-border/50"
+            asChild
           >
-            <Settings className="h-4 w-4" />
+            <NavLink to="/settings">
+              <Settings className="h-4 w-4" />
+            </NavLink>
           </Button>
         </div>
       </SidebarFooter>

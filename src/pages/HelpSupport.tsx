@@ -78,7 +78,15 @@ export default function HelpSupport() {
     }
   ];
 
-  const TutorialCard = ({ tutorial, index }: { tutorial: any; index: number }) => (
+  interface Tutorial {
+    title: string;
+    description: string;
+    type: string;
+    duration: string;
+    completed: boolean;
+  }
+
+  const TutorialCard = ({ tutorial, index }: { tutorial: Tutorial; index: number }) => (
     <Card className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
       <div className="relative aspect-video bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors"></div>

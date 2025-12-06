@@ -18,9 +18,11 @@ import {
   PauseCircle,
   MoreHorizontal,
   Eye,
-  Edit
+  Edit,
+  History
 } from "lucide-react";
 import { format } from "date-fns";
+import { ProjectHistoryModal } from "@/components/modals/ProjectHistoryModal";
 
 interface Project {
   id: string;
@@ -79,6 +81,15 @@ const Projects = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
+
+  // History Modal State
+  const [historyModalOpen, setHistoryModalOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | undefined>();
+
+  const openHistory = (project: Project) => {
+    setSelectedProject(project);
+    setHistoryModalOpen(true);
+  };
 
   const filteredProjects = projects.filter(project => {
     const matchesSearch = project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -244,15 +255,26 @@ const Projects = () => {
                     <Eye className="h-4 w-4 mr-1" />
                     View
                   </Button>
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <Edit className="h-4 w-4 mr-1" />
-                    Edit
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => openHistory(project)}
+                  >
+                    <History className="h-4 w-4 mr-1" />
+                    History
                   </Button>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
+
+        <ProjectHistoryModal
+          open={historyModalOpen}
+          onOpenChange={setHistoryModalOpen}
+          project={selectedProject}
+        />
 
         {filteredProjects.length === 0 && (
           <Card className="bg-card/50 border-border/50 backdrop-blur-sm">

@@ -20,8 +20,10 @@ import {
   Activity,
   MoreHorizontal,
   Edit,
-  Settings
+  Settings,
+  Key
 } from "lucide-react";
+import { toast } from "sonner";
 
 interface TeamMember {
   id: string;
@@ -309,9 +311,9 @@ const Teams = () => {
                     <Edit className="h-4 w-4 mr-1" />
                     Edit
                   </Button>
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <Settings className="h-4 w-4 mr-1" />
-                    Manage
+                  <Button variant="outline" size="sm" className="flex-1" onClick={() => toast("Permissions management not implemented yet")}>
+                    <Key className="h-4 w-4 mr-1" />
+                    Perms
                   </Button>
                 </div>
               </CardContent>
