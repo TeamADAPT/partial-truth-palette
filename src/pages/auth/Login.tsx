@@ -6,19 +6,36 @@ import { Separator } from "@/components/ui/separator";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Github, Mail, Lock, ArrowRight } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export default function Login() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate login
-    setTimeout(() => {
-      setLoading(false);
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      toast.success("Logged in successfully");
       navigate("/");
-    }, 1000);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message || "Failed to login");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -42,6 +59,8 @@ export default function Login() {
                     placeholder="name@example.com"
                     className="pl-10 bg-background/50"
                     required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                   <Mail className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                 </div>
@@ -55,6 +74,8 @@ export default function Login() {
                     placeholder="••••••••"
                     className="pl-10 bg-background/50"
                     required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                   <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                 </div>

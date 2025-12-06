@@ -7,31 +7,48 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Bell, CreditCard, Globe, Lock, User, Shield, Plug } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { useAppStore } from "@/lib/store";
+import { useAuth } from "@/providers/AuthProvider";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function SettingsPage() {
-  const { userProfile, updateUserProfile } = useAppStore();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: userProfile.name,
-    email: userProfile.email,
-    bio: userProfile.bio
+    name: "",
+    email: "",
+    bio: ""
   });
 
-  const handleSave = () => {
-    setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      updateUserProfile({
-        name: formData.name,
-        email: formData.email,
-        bio: formData.bio
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.user_metadata?.full_name || "",
+        email: user.email || "",
+        bio: "" // Fetch from profiles table if connected fully
       });
-      setLoading(false);
+    }
+  }, [user]);
+
+  const handleSave = async () => {
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.auth.updateUser({
+        email: formData.email,
+        data: { full_name: formData.name }
+      });
+
+      if (error) throw error;
       toast.success("Settings saved successfully");
-    }, 800);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -70,8 +87,8 @@ export default function SettingsPage() {
               <CardContent className="space-y-6">
                 <div className="flex items-center gap-6">
                   <Avatar className="h-20 w-20">
-                    <AvatarImage src={userProfile.avatar} />
-                    <AvatarFallback>{userProfile.name.split(' ').map(n=>n[0]).join('')}</AvatarFallback>
+                    <AvatarImage src="" />
+                    <AvatarFallback>{formData.name ? formData.name.split(' ').map(n=>n[0]).join('') : "U"}</AvatarFallback>
                   </Avatar>
                   <Button variant="outline">Change Avatar</Button>
                 </div>

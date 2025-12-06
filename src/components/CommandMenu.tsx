@@ -27,13 +27,13 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
-import { useAppStore } from "@/lib/store";
+import { useCreateProject } from "@/hooks/use-projects";
 
 export function CommandMenu() {
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
   const { setTheme, theme } = useTheme();
-  const { addProject } = useAppStore();
+  const createProjectMutation = useCreateProject();
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -85,18 +85,24 @@ export function CommandMenu() {
 
           <CommandGroup heading="Actions">
             <CommandItem onSelect={() => runCommand(() => {
-              addProject({
+              createProjectMutation.mutate({
                 name: "New Project (Cmd+K)",
                 description: "Created via Command Menu",
                 status: "planning",
-                progress: 0,
+                // progress: 0,
                 dueDate: new Date(),
                 team: [],
                 category: "Development",
                 priority: "medium"
+              }, {
+                onSuccess: () => {
+                  toast.success("Quick project created!");
+                  navigate("/projects");
+                },
+                onError: (err) => {
+                  toast.error(`Failed to create project: ${err.message}`);
+                }
               });
-              toast.success("Quick project created!");
-              navigate("/projects");
             })}>
               <Plus className="mr-2 h-4 w-4" />
               <span>Create New Project</span>
@@ -126,7 +132,10 @@ export function CommandMenu() {
               <User className="mr-2 h-4 w-4" />
               <span>Profile</span>
             </CommandItem>
-            <CommandItem onSelect={() => runCommand(() => navigate("/login"))}>
+            <CommandItem onSelect={() => runCommand(() => {
+              navigate("/login");
+              // Also trigger real sign out if available, handled in AuthProvider usually
+            })}>
               <LogOut className="mr-2 h-4 w-4" />
               <span>Log out</span>
             </CommandItem>

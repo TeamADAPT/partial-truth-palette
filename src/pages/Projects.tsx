@@ -23,26 +23,22 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { ProjectHistoryModal } from "@/components/modals/ProjectHistoryModal";
-import { useAppStore, Project } from "@/lib/store";
+import { Project } from "@/lib/store";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { ProjectSkeleton } from "@/components/skeletons/ProjectSkeleton";
-import { useEffect } from "react";
+import { useProjects, useCreateProject } from "@/hooks/use-projects";
 
 const Projects = () => {
-  const { projects, addProject } = useAppStore();
-  const [isLoading, setIsLoading] = useState(true);
+  // Use React Query hooks
+  const { data: projects = [], isLoading, error } = useProjects();
+  const createProjectMutation = useCreateProject();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-
-  useEffect(() => {
-    // Simulate data fetching
-    const timer = setTimeout(() => setIsLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, []);
 
   // History Modal State
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
@@ -64,20 +60,25 @@ const Projects = () => {
   const handleCreateProject = () => {
     if (!newProject.name) return;
 
-    addProject({
+    createProjectMutation.mutate({
       name: newProject.name,
       description: newProject.description,
       status: "planning",
-      progress: 0,
+      // progress: 0, // Handled by default or optional
       dueDate: new Date(new Date().setMonth(new Date().getMonth() + 1)), // Default 1 month out
       team: [],
       category: newProject.category,
       priority: newProject.priority,
+    }, {
+      onSuccess: () => {
+        setIsAddDialogOpen(false);
+        setNewProject({ name: "", description: "", category: "Development", priority: "medium" });
+        toast.success("Project created successfully!");
+      },
+      onError: (err) => {
+        toast.error(`Failed to create project: ${err.message}`);
+      }
     });
-
-    setIsAddDialogOpen(false);
-    setNewProject({ name: "", description: "", category: "Development", priority: "medium" });
-    toast.success("Project created successfully!");
   };
 
   const filteredProjects = projects.filter(project => {
@@ -250,6 +251,11 @@ const Projects = () => {
         {/* Projects Grid */}
         {isLoading ? (
           <ProjectSkeleton />
+        ) : error ? (
+          <div className="text-center py-12 text-red-500">
+            <p>Error loading projects: {error.message}</p>
+            <p className="text-sm text-muted-foreground mt-2">Make sure the database tables exist.</p>
+          </div>
         ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProjects.map((project, index) => (

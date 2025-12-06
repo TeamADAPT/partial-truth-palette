@@ -3,7 +3,7 @@ import { Mic, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
-import { useAppStore } from "@/lib/store";
+import { useCreateProject } from "@/hooks/use-projects";
 
 interface SpeechRecognitionEvent {
   results: {
@@ -22,7 +22,7 @@ export function VoiceCommandOverlay() {
   const [isOpen, setIsOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
-  const { addProject } = useAppStore();
+  const createProjectMutation = useCreateProject();
   const recognitionRef = useRef<SpeechRecognitionInstance>(null);
 
   // Keyboard shortcut to toggle voice command (Ctrl+Space)
@@ -65,18 +65,24 @@ export function VoiceCommandOverlay() {
     const lowerText = text.toLowerCase();
 
     if (lowerText.includes("create project") || lowerText.includes("new project")) {
-      addProject({
+      createProjectMutation.mutate({
         name: "Voice Created Project",
         description: `Created from voice command: "${text}"`,
         status: "planning",
-        progress: 0,
+        // progress: 0,
         dueDate: new Date(),
         team: [],
         category: "Development",
         priority: "medium"
+      }, {
+        onSuccess: () => {
+          toast.success("Project created from voice command!");
+          setTimeout(() => setIsOpen(false), 1500);
+        },
+        onError: (err) => {
+          toast.error(`Voice command failed: ${err.message}`);
+        }
       });
-      toast.success("Project created from voice command!");
-      setTimeout(() => setIsOpen(false), 1500);
     } else {
       toast.info(`Heard: "${text}" (No action mapped)`);
       setTimeout(() => setIsOpen(false), 2000);

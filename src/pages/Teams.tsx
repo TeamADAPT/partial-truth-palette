@@ -24,10 +24,10 @@ import {
   Key
 } from "lucide-react";
 import { toast } from "sonner";
-import { useAppStore } from "@/lib/store";
+import { useTeams } from "@/hooks/use-teams";
 
 const Teams = () => {
-  const { teamMembers } = useAppStore();
+  const { data: teamMembers = [], isLoading } = useTeams();
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
