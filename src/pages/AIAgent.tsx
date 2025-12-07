@@ -4,13 +4,16 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bot, Send, User, Sparkles } from "lucide-react";
+import { Bot, Send, User, Sparkles, Terminal } from "lucide-react";
+import { agentClient } from "@/lib/agent/client";
+import { toast } from "sonner";
 
 interface Message {
   id: string;
   role: "user" | "ai";
   content: string;
   timestamp: Date;
+  isTool?: boolean;
 }
 
 export default function AIAgent() {
@@ -18,7 +21,7 @@ export default function AIAgent() {
     {
       id: "1",
       role: "ai",
-      content: "Hello! I'm your AI Business Assistant. How can I help you optimize your operations today?",
+      content: "Hello! I'm your AI Business Assistant. I can create projects or list your current work. Try 'Create project Marketing Campaign'.",
       timestamp: new Date()
     }
   ]);
@@ -32,7 +35,7 @@ export default function AIAgent() {
     }
   }, [messages, isTyping]);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
     const newUserMessage: Message = {
@@ -46,27 +49,31 @@ export default function AIAgent() {
     setInputValue("");
     setIsTyping(true);
 
-    // Simulate AI thinking and response
-    setTimeout(() => {
-      const responses = [
-        "I've analyzed the market trends and suggest focusing on Q3 growth strategies.",
-        "That's a great idea! I can draft a preliminary plan for that.",
-        "Based on your current project velocity, we might need to adjust the timeline.",
-        "I've updated the team's task list accordingly.",
-        "Here's a summary of the competitive landscape for that sector."
-      ];
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+    try {
+      // Call the Agent Client (Edge Function -> Local Fallback)
+      const response = await agentClient.chat(newUserMessage.content);
 
       const newAiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "ai",
-        content: randomResponse,
+        content: response.message,
         timestamp: new Date()
       };
 
       setMessages(prev => [...prev, newAiMessage]);
+
+      // If tools were called, we could show a system message or toast
+      if (response.toolCalls && response.toolCalls.length > 0) {
+        response.toolCalls.forEach(tool => {
+          toast.success(`Executed: ${tool.name}`);
+        });
+      }
+
+    } catch (error) {
+      toast.error("Failed to get AI response");
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   return (
